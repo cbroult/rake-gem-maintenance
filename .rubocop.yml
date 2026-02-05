@@ -1,0 +1,12 @@
+AllCops:
+  NewCops: enable
+
+plugins:
+  - rubocop-rake
+  - rubocop-rspec
+
+Layout/LineLength:
+  Max: 120
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
