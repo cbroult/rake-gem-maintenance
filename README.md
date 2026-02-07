@@ -1,5 +1,8 @@
 # Rake::GemMaintenance
 
+[![Ruby](https://github.com/cbroult/rake-gem-maintenance/actions/workflows/main.yml/badge.svg)](https://github.com/cbroult/rake-gem-maintenance/actions/workflows/main.yml)
+[![Dependabot](https://img.shields.io/badge/dependabot-enabled-blue?logo=dependabot)](https://github.com/cbroult/rake-gem-maintenance/network/updates)
+
 Reusable Rake tasks for gem maintenance: dependency upgrades and version bumps.
 
 ## Installation
