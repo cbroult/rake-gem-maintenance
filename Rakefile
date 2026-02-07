@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "bundler/gem_tasks"
 require "rspec/core/rake_task"
 
 RSpec::Core::RakeTask.new(:spec)
@@ -10,4 +11,13 @@ RuboCop::RakeTask.new do |t|
   t.options = ["--autocorrect"]
 end
 
-task default: %i[spec rubocop]
+require "cucumber/rake/task"
+
+Cucumber::Rake::Task.new
+
+require "rake/gem_maintenance/install_tasks"
+
+task default: :verify
+
+desc "Run all verification tasks"
+task verify: %i[spec cucumber rubocop]
