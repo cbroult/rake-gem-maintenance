@@ -161,13 +161,12 @@ GEM
     unicode-emoji (4.2.0)
 
 PLATFORMS
-  ruby
   x64-mingw-ucrt
   x86_64-linux
 
 DEPENDENCIES
-  aruba (~> 2.3)
-  cucumber (~> 9.0)
+  aruba
+  cucumber
   guard
   guard-bundler
   guard-cucumber
