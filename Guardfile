@@ -25,7 +25,7 @@ group :red_green_refactor, halt_on_fail: true do
     dsl.watch_spec_files_for(ruby.lib_files)
   end
 
-  guard "cucumber" do
+  guard "cucumber", notification: false do
     watch(%r{^features/.+\.feature$})
     watch(%r{^features/support/.+$}) { "features" }
     watch(%r{^features/step_definitions/.+$}) { "features" }
