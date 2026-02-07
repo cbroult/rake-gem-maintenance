@@ -24,5 +24,7 @@ jobs:
           bundler-cache: true
       - name: Run rspec
         run: bundle exec rspec
+      - name: Run cucumber
+        run: bundle exec cucumber
       - name: Run rubocop
         run: bundle exec rubocop --config .rubocop.yml

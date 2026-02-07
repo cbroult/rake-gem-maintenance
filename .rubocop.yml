@@ -8,5 +8,9 @@ plugins:
 Layout/LineLength:
   Max: 120
 
+Metrics/BlockLength:
+  Exclude:
+    - "features/step_definitions/**/*.rb"
+
 Style/StringLiterals:
   EnforcedStyle: double_quotes

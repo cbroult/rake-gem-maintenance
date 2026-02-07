@@ -1,2 +1,5 @@
 .rspec_status
 .idea/
+/pkg/
+/tmp/aruba/
+

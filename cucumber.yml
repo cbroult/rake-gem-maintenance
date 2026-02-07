@@ -1,0 +1,2 @@
+default: --format progress --strict
+verbose: --format pretty --strict
