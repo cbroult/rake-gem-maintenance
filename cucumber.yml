@@ -1,2 +1,2 @@
-default: &std --strict --publish-quiet --format progress
-verbose: *std --format pretty
+default: --strict --publish-quiet --format progress
+verbose: --strict --publish-quiet --format pretty
