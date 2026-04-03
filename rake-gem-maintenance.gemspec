@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "lib/rake/gem_maintenance/version"
+require_relative "lib/rake/gem/maintenance/version"
 
 Gem::Specification.new do |spec|
   spec.name = "rake-gem-maintenance"

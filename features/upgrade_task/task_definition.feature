@@ -6,7 +6,7 @@ Feature: Upgrade task definition
   Background:
     Given a file named "Rakefile" with:
       """
-      require "rake/gem_maintenance/upgrade_task"
+      require "rake/gem/maintenance/upgrade_task"
 
       Rake::GemMaintenance::UpgradeTask.new
       """
