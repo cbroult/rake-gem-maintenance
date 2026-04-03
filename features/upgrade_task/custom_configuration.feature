@@ -6,7 +6,7 @@ Feature: Upgrade task custom configuration
   Scenario: Custom task name
     Given a file named "Rakefile" with:
       """
-      require "rake/gem_maintenance/upgrade_task"
+      require "rake/gem/maintenance/upgrade_task"
 
       Rake::GemMaintenance::UpgradeTask.new(:deps)
       """
@@ -19,7 +19,7 @@ Feature: Upgrade task custom configuration
   Scenario: Custom verification task
     Given a file named "Rakefile" with:
       """
-      require "rake/gem_maintenance/upgrade_task"
+      require "rake/gem/maintenance/upgrade_task"
 
       Rake::GemMaintenance::UpgradeTask.new do |t|
         t.verification_task = :test
@@ -36,7 +36,7 @@ Feature: Upgrade task custom configuration
   Scenario: Custom auto pipeline
     Given a file named "Rakefile" with:
       """
-      require "rake/gem_maintenance/upgrade_task"
+      require "rake/gem/maintenance/upgrade_task"
 
       Rake::GemMaintenance::UpgradeTask.new do |t|
         t.auto_pipeline = %i[branch gems commit push]

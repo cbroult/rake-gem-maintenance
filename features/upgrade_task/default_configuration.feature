@@ -6,7 +6,7 @@ Feature: Upgrade task default configuration
   Background:
     Given a file named "Rakefile" with:
       """
-      require "rake/gem_maintenance/upgrade_task"
+      require "rake/gem/maintenance/upgrade_task"
 
       Rake::GemMaintenance::UpgradeTask.new
       """
@@ -22,7 +22,7 @@ Feature: Upgrade task default configuration
   Scenario: Auto pipeline includes default steps in order
     Given a file named "Rakefile" with:
       """
-      require "rake/gem_maintenance/upgrade_task"
+      require "rake/gem/maintenance/upgrade_task"
 
       Rake::GemMaintenance::UpgradeTask.new
 

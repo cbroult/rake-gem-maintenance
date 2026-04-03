@@ -73,10 +73,27 @@ module Rake
 
       def execute_version_bump(type)
         puts "Bumping #{type} version..."
-        bump_result = system("bundle exec gem bump --version #{type} --message '#{commit_message_template}'")
+        version_file = detect_version_file
+        cmd = "bundle exec gem bump --version #{type}"
+        cmd += " --file #{version_file}" if version_file
+        bump_result = system("#{cmd} --message '#{commit_message_template}'")
         return if bump_result
 
         abort "Error: Failed to bump version"
+      end
+
+      def detect_version_file
+        gemspec_path = Dir.glob("*.gemspec").first
+        return nil unless gemspec_path
+
+        gem_name = Gem::Specification.load(gemspec_path).name
+        version_rb = File.join("lib", gem_name.tr("-", "/"), "version.rb")
+        return version_rb if File.exist?(version_rb)
+
+        version_rb = File.join("lib", gem_name.split("-").first, gem_name.split("-")[1..].join("_"), "version.rb")
+        return version_rb if File.exist?(version_rb)
+
+        nil
       end
 
       def update_gemfile_lock

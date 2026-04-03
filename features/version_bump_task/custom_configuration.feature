@@ -6,7 +6,7 @@ Feature: Version bump task custom configuration
   Scenario: Custom namespace
     Given a file named "Rakefile" with:
       """
-      require "rake/gem_maintenance/version_bump_task"
+      require "rake/gem/maintenance/version_bump_task"
 
       Rake::GemMaintenance::VersionBumpTask.new do |t|
         t.namespace_name = :ver
@@ -18,7 +18,7 @@ Feature: Version bump task custom configuration
   Scenario: Disabling the bump alias
     Given a file named "Rakefile" with:
       """
-      require "rake/gem_maintenance/version_bump_task"
+      require "rake/gem/maintenance/version_bump_task"
 
       Rake::GemMaintenance::VersionBumpTask.new do |t|
         t.create_alias = false
@@ -31,7 +31,7 @@ Feature: Version bump task custom configuration
   Scenario: Custom default type shown in description
     Given a file named "Rakefile" with:
       """
-      require "rake/gem_maintenance/version_bump_task"
+      require "rake/gem/maintenance/version_bump_task"
 
       Rake::GemMaintenance::VersionBumpTask.new do |t|
         t.default_type = "minor"

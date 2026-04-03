@@ -6,7 +6,7 @@ Feature: Install tasks
   Scenario: Defines both upgrade and version bump tasks
     Given a file named "Rakefile" with:
       """
-      require "rake/gem_maintenance/install_tasks"
+      require "rake/gem/maintenance/install_tasks"
       """
     When I successfully run `rake -T`
     Then the output should contain "upgrade"

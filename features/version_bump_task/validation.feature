@@ -6,7 +6,7 @@ Feature: Version bump task validation
   Background:
     Given a file named "Rakefile" with:
       """
-      require "rake/gem_maintenance/version_bump_task"
+      require "rake/gem/maintenance/version_bump_task"
 
       Rake::GemMaintenance::VersionBumpTask.new
       """
