@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "rake"
-require "rake/gem_maintenance"
+require "rake/gem/maintenance"
 
 Rake::TaskManager.record_task_metadata = true
 

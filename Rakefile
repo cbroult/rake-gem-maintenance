@@ -15,7 +15,7 @@ require "cucumber/rake/task"
 
 Cucumber::Rake::Task.new
 
-require "rake/gem_maintenance/install_tasks"
+require "rake/gem/maintenance/install_tasks"
 
 task default: :verify
 
