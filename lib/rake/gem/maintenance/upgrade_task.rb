@@ -117,7 +117,7 @@ module Rake
       end
 
       def push_branch
-        sh "git push origin #{upgrade_branch}"
+        sh "git push --force-with-lease origin #{upgrade_branch}"
       end
     end
   end
