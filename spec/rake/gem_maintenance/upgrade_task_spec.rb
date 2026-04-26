@@ -34,7 +34,7 @@ RSpec.describe Rake::GemMaintenance::UpgradeTask do
 
     it "sets upgrade:auto pipeline with default tasks" do
       prerequisites = Rake::Task["upgrade:auto"].prerequisites
-      expect(prerequisites).to eq(%w[branch gems verify commit version:bump release push])
+      expect(prerequisites).to eq(%w[branch gems verify commit version:bump prepare_version release push])
     end
   end
 
