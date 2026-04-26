@@ -64,6 +64,7 @@ module Rake
 
       def define_tasks
         define_top_level_task
+        define_info_tasks
         define_prepare_version_task
         define_auto_task
         define_branch_task
@@ -71,6 +72,38 @@ module Rake
         define_commit_task
         define_push_task
       end
+
+      # rubocop:disable Metrics/AbcSize
+      def define_info_tasks
+        task_instance = self
+        namespace name do
+          namespace :info do
+            desc "Show configured gem repositories"
+            task :repos do
+              puts "Gem repositories:"
+              task_instance.gem_repositories.each do |repo|
+                puts "  - #{repo[:name]}: #{repo[:url]}"
+              end
+            end
+
+            desc "Show current gem version"
+            task :version do
+              ver = task_instance.gem_version || "unknown"
+              puts "Current version: #{ver}"
+            end
+
+            desc "Show current gem name"
+            task :name do
+              name = task_instance.gem_name || "unknown"
+              puts "Gem name: #{name}"
+            end
+
+            desc "Show all upgrade info"
+            task all: %i[name version repos]
+          end
+        end
+      end
+      # rubocop:enable Metrics/AbcSize
 
       def define_top_level_task
         desc "Alias for #{name}:auto"

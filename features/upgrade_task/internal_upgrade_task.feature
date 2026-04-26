@@ -44,3 +44,14 @@ Feature: InternalUpgradeTask for cbp-org only gems
       ```
     When I successfully run `rake -T upgrade:prepare_version`
     Then the output should contain "upgrade:prepare_version"
+
+  Scenario: InternalUpgradeTask has info:repos task showing cbp-org
+    Given a file named "Rakefile" with:
+      ```
+      require "rake/gem/maintenance/upgrade_task"
+
+      Rake::GemMaintenance::InternalUpgradeTask.new
+      ```
+    When I successfully run `rake upgrade:info:repos`
+    Then the output should contain "cbp-org"
+    And the output should contain "gems.cbp-org.internal"
