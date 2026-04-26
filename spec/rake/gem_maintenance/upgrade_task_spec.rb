@@ -129,4 +129,36 @@ RSpec.describe Rake::GemMaintenance::UpgradeTask do
       expect(Rake::Task["upgrade:push"].comment).to include("Push")
     end
   end
+
+  describe Rake::GemMaintenance::InternalUpgradeTask do
+    before do
+      Rake::Task.clear
+    end
+
+    it "defines the upgrade task" do
+      described_class.new
+      expect(Rake::Task.task_defined?("upgrade")).to be true
+    end
+
+    it "uses internal repository by default" do
+      task = described_class.new
+      expect(task.gem_repositories).to eq(Rake::GemMaintenance::Repos.internal)
+    end
+  end
+
+  describe Rake::GemMaintenance::DualUpgradeTask do
+    before do
+      Rake::Task.clear
+    end
+
+    it "defines the upgrade task" do
+      described_class.new
+      expect(Rake::Task.task_defined?("upgrade")).to be true
+    end
+
+    it "uses both repositories by default" do
+      task = described_class.new
+      expect(task.gem_repositories).to eq(Rake::GemMaintenance::Repos.all)
+    end
+  end
 end
