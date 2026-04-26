@@ -26,6 +26,7 @@ rake rubocop
 
 - **UpgradeTask** — Rake::TaskLib subclass defining upgrade:* tasks (branch, gems, commit, push, auto)
 - **VersionBumpTask** — Rake::TaskLib subclass defining version:bump[type] and bump[type] tasks
+- **GemPublisher** — Handles publishing gems to multiple repositories, collecting warnings for failed pushes
 
 ### Entry Points
 
