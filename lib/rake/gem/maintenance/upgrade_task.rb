@@ -3,6 +3,7 @@
 require "rake"
 require "rake/tasklib"
 require_relative "gem_publisher"
+require_relative "repos"
 
 module Rake
   module GemMaintenance
@@ -39,17 +40,13 @@ module Rake
         @update_gems = true
         @run_bundle_audit = true
         @auto_pipeline = nil
-        @gem_repositories = default_repositories
+        @gem_repositories = Repos.rubygems
         @gem_publisher_class = GemPublisher
         @gem_name = detect_gem_name
         @gem_version = detect_gem_version
       end
 
       private
-
-      def default_repositories
-        [{ name: "rubygems", url: "https://rubygems.org" }]
-      end
 
       def detect_gem_name
         gemspec = Dir.glob("*.gemspec").first
@@ -197,6 +194,24 @@ module Rake
         end
       end
       # rubocop:enable Metrics/ClassLength, Metrics/MethodLength
+    end
+
+    # Upgrades gems and publishes to cbp-org only (internal gems).
+    # Uses Repos.internal as default repositories.
+    class InternalUpgradeTask < UpgradeTask
+      def apply_default_configuration(name)
+        super
+        @gem_repositories = Repos.internal
+      end
+    end
+
+    # Upgrades gems and publishes to both rubygems.org and cbp-org.
+    # Uses Repos.all as default repositories.
+    class DualUpgradeTask < UpgradeTask
+      def apply_default_configuration(name)
+        super
+        @gem_repositories = Repos.all
+      end
     end
   end
 end

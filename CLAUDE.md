@@ -25,13 +25,34 @@ rake rubocop
 ### Core Classes (lib/rake/gem_maintenance/)
 
 - **UpgradeTask** — Rake::TaskLib subclass defining upgrade:* tasks (branch, gems, commit, push, auto)
+  - Default repositories: rubygems.org
+- **InternalUpgradeTask** — Rake::TaskLib subclass for internal gems only
+  - Default repositories: gems.cbp-org.internal
+- **DualUpgradeTask** — Rake::TaskLib subclass for gems published to both rubygems.org and cbp-org
+  - Default repositories: both rubygems.org and cbp-org.internal
 - **VersionBumpTask** — Rake::TaskLib subclass defining version:bump[type] and bump[type] tasks
 - **GemPublisher** — Handles publishing gems to multiple repositories, collecting warnings for failed pushes
+- **Repos** — Pre-configured repository sets (internal, all, rubygems, default)
 
 ### Entry Points
 
-- `rake/gem_maintenance.rb` — requires both task classes
-- `rake/gem_maintenance/install_tasks.rb` — auto-instantiates both with defaults
+- `rake/gem_maintenance.rb` — requires all task classes
+- `rake/gem_maintenance/install_tasks.rb` — auto-instantiates UpgradeTask and VersionBumpTask with defaults
+
+### Quick Usage
+
+```ruby
+# Internal gems only (cbp-org.internal)
+Rake::GemMaintenance::InternalUpgradeTask.new
+
+# Both repositories
+Rake::GemMaintenance::DualUpgradeTask.new
+
+# Default (rubygems.org) - can also use Repos module
+Rake::GemMaintenance::UpgradeTask.new do |t|
+  t.gem_repositories = Rake::GemMaintenance::Repos.internal  # or Repos.all
+end
+```
 
 ## Commit Conventions
 
