@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "net/http"
 require "rake"
 require "rake/tasklib"
 require_relative "gem_publisher"
@@ -63,9 +64,12 @@ module Rake
       end
 
       def repo_available?(repo)
-        url = "#{repo[:url]}/api/v1/gems"
-        URI.parse(url).open { false }
-        true
+        url = repo[:url]
+        uri = URI.parse(url)
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = uri.scheme == "https"
+        http.open_timeout = 5
+        http.start { |h| h.head("/").code.to_i < 400 }
       rescue StandardError
         false
       end
@@ -83,41 +87,49 @@ module Rake
         define_push_task
       end
 
-      # rubocop:disable Metrics/AbcSize
       def define_info_tasks
         task_instance = self
         namespace name do
           namespace :info do
-            desc "Show configured gem repositories"
-            task :repos do
-              puts "Gem repositories:"
-              task_instance.gem_repositories.each do |repo|
-                available = task_instance.send(:repo_available?, repo)
-                status = available ? "✓" : "✗"
-                avail_text = available ? "AVAILABLE" : "NOT AVAILABLE"
-                puts "  - #{repo[:name]} (#{status}) - #{avail_text}: #{repo[:url]}"
-              end
-            end
-
-            desc "Show current gem version"
-            task :version do
-              ver = task_instance.gem_version || "unknown"
-              puts "Current version: #{ver}"
-            end
-
-            desc "Show current gem name"
-            task :name do
-              name = task_instance.gem_name || "unknown"
-              puts "Gem name: #{name}"
-            end
-
+            define_info_repos_task(task_instance)
+            define_info_version_task(task_instance)
+            define_info_name_task(task_instance)
             desc "Show all upgrade info"
             task all: %i[name version repos]
-            task info: :all
+          end
+          desc "Show all upgrade info"
+          task info: "#{name}:info:all"
+        end
+      end
+
+      def define_info_repos_task(task_instance)
+        desc "Show configured gem repositories"
+        task :repos do
+          puts "Gem repositories:"
+          task_instance.gem_repositories.each do |repo|
+            available = task_instance.send(:repo_available?, repo)
+            status = available ? "✓" : "✗"
+            avail_text = available ? "AVAILABLE" : "NOT AVAILABLE"
+            puts "  - #{repo[:name]} (#{status}) - #{avail_text}: #{repo[:url]}"
           end
         end
       end
-      # rubocop:enable Metrics/AbcSize
+
+      def define_info_version_task(task_instance)
+        desc "Show current gem version"
+        task :version do
+          ver = task_instance.gem_version || "unknown"
+          puts "Current version: #{ver}"
+        end
+      end
+
+      def define_info_name_task(task_instance)
+        desc "Show current gem name"
+        task :name do
+          name = task_instance.gem_name || "unknown"
+          puts "Gem name: #{name}"
+        end
+      end
 
       def define_top_level_task
         desc "Alias for #{name}:auto"
