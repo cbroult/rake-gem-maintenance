@@ -100,6 +100,7 @@ module Rake
 
             desc "Show all upgrade info"
             task all: %i[name version repos]
+            task info: :all
           end
         end
       end
