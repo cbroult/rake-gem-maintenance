@@ -98,6 +98,10 @@ Feature: Upgrade task multi-repository publishing
           @failed
         end
 
+        def successful_repos
+          []
+        end
+
         def next_version(gem_name, current_version)
           current_version
         end
@@ -174,6 +178,10 @@ Feature: Upgrade task multi-repository publishing
           ["unavailable"]
         end
 
+        def successful_repos
+          ["rubygems"]
+        end
+
         def next_version(gem_name, current_version)
           current_version
         end
@@ -243,3 +251,159 @@ Feature: Upgrade task multi-repository publishing
     Then the exit status should not be 0
     And the output should contain "[ERROR]"
     And the output should contain "No repositories available"
+
+  Scenario: Version not on any repo shows will publish
+    Given a file named "test-gem.gemspec" with:
+      """
+      Gem::Specification.new do |spec|
+        spec.name = "test-gem"
+        spec.version = "2.0.0"
+        spec.authors = ["Test"]
+        spec.summary = "Test gem"
+      end
+      """
+    And a file named "Rakefile" with:
+      """
+      require "rake/gem/maintenance/upgrade_task"
+
+      class MockPublisher
+        def initialize(repositories)
+          @repositories = repositories
+          @failed = []
+        end
+
+        def check_all_repositories(gem_name)
+        end
+
+        def any_available?
+          true
+        end
+
+        def failed_repositories
+          []
+        end
+
+        def successful_repos
+          []
+        end
+
+        def next_version(gem_name, current_version)
+          current_version
+        end
+      end
+
+      Rake::GemMaintenance::UpgradeTask.new do |t|
+        t.gem_repositories = [
+          { name: "rubygems", url: "https://rubygems.org" },
+          { name: "cbp-org", url: "https://gems.cbp-org.internal" }
+        ]
+        t.gem_publisher_class = MockPublisher
+      end
+      """
+    When I successfully run `rake upgrade:prepare_version`
+    Then the output should contain "[INFO] Version 2.0.0 not found on any repository - will publish"
+
+  Scenario: Version exists on all repos shows next available
+    Given a file named "test-gem.gemspec" with:
+      """
+      Gem::Specification.new do |spec|
+        spec.name = "test-gem"
+        spec.version = "2.0.0"
+        spec.authors = ["Test"]
+        spec.summary = "Test gem"
+      end
+      """
+    And a file named "Rakefile" with:
+      """
+      require "rake/gem/maintenance/upgrade_task"
+
+      class MockPublisher
+        def initialize(repositories)
+          @repositories = repositories
+        end
+
+        def check_all_repositories(gem_name)
+        end
+
+        def any_available?
+          true
+        end
+
+        def failed_repositories
+          []
+        end
+
+        def successful_repos
+          []
+        end
+
+        def next_version(gem_name, current_version)
+          "2.0.1"
+        end
+      end
+
+      Rake::GemMaintenance::UpgradeTask.new do |t|
+        t.gem_repositories = [
+          { name: "rubygems", url: "https://rubygems.org" },
+          { name: "cbp-org", url: "https://gems.cbp-org.internal" }
+        ]
+        t.gem_publisher_class = MockPublisher
+      end
+      """
+    When I successfully run `rake upgrade:prepare_version`
+    Then the output should contain "[INFO] Version 2.0.0 already published to all repositories"
+    And the output should contain "[INFO] Next available version: 2.0.1"
+
+  Scenario: Partial publish shows warning
+    Given a file named "test-gem.gemspec" with:
+      """
+      Gem::Specification.new do |spec|
+        spec.name = "test-gem"
+        spec.version = "2.0.0"
+        spec.authors = ["Test"]
+        spec.summary = "Test gem"
+      end
+      """
+    And a file named "Rakefile" with:
+      """
+      require "rake/gem/maintenance/upgrade_task"
+
+      class MockPublisher
+        def initialize(repositories)
+          @repositories = repositories
+        end
+
+        def check_all_repositories(gem_name)
+        end
+
+        def any_available?
+          true
+        end
+
+        def failed_repositories
+          ["cbp-org"]
+        end
+
+        def successful_repos
+          ["rubygems"]
+        end
+
+        def next_version(gem_name, current_version)
+          current_version
+        end
+      end
+
+      Rake::GemMaintenance::UpgradeTask.new do |t|
+        t.gem_repositories = [
+          { name: "rubygems", url: "https://rubygems.org" },
+          { name: "cbp-org", url: "https://gems.cbp-org.internal" }
+        ]
+        t.gem_publisher_class = MockPublisher
+      end
+
+      task :run_check do
+        Rake::Task["upgrade:prepare_version"].invoke
+      end
+      """
+    When I successfully run `rake run_check`
+    Then the output should contain "[WARN] Version 2.0.0 was only published to 1 of 2 repositories"

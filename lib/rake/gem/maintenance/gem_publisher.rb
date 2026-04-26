@@ -7,7 +7,7 @@ module Rake
   module GemMaintenance
     # Publishes gems to multiple gem repositories, with version checking and warning handling.
     class GemPublisher
-      attr_reader :repositories, :warnings, :failed_repositories
+      attr_reader :repositories, :warnings, :failed_repositories, :successful_repos
 
       def initialize(repositories = default_repositories)
         @repositories = repositories
@@ -15,6 +15,7 @@ module Rake
         @failed_pushes = []
         @failed_repositories = []
         @published_files = []
+        @successful_repos = []
       end
 
       def default_repositories
@@ -77,7 +78,10 @@ module Rake
       def push(gem_file, repository:)
         cmd = "gem push #{gem_file} --host #{repository[:url]}"
         result = system(cmd)
-        @published_files << gem_file if result
+        if result
+          @published_files << gem_file
+          @successful_repos << repository[:name]
+        end
       rescue StandardError => e
         @failed_pushes << { repository: repository[:name], error: e.message }
       end
