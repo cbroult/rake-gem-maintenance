@@ -224,9 +224,14 @@ module Rake
         end
 
         publisher = gem_publisher_class.new(gem_repositories)
-        publisher.check_all_repositories(gem_name)
+        gemspec_repos = gem_repositories.select { |repo| repo_available?(repo) }
 
-        return unless repos_available?(publisher)
+        if gemspec_repos.empty?
+          puts "[ERROR] No repositories available. Cannot check version."
+          abort
+        end
+
+        publisher.check_all_repositories(gem_name)
 
         print_failed_repository_warnings(publisher)
         version = gem_version
