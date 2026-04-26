@@ -34,5 +34,5 @@ Feature: Upgrade task default configuration
     When I successfully run `rake show_pipeline`
     Then the output should contain:
       """
-      pipeline: ["branch", "gems", "verify", "commit", "version:bump", "release", "push"]
+      pipeline: ["branch", "gems", "verify", "commit", "version:bump", "prepare_version", "release", "push"]
       """
