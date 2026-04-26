@@ -114,6 +114,22 @@ Feature: Upgrade task multi-repository publishing
     When I successfully run `rake upgrade:prepare_version`
     Then the output should contain "[INFO] Version 1.0.0 not found on any repository - will publish"
 
+  Scenario: Has upgrade:info:repos task showing repos
+    Given a file named "Rakefile" with:
+      """
+      require "rake/gem/maintenance/upgrade_task"
+
+      Rake::GemMaintenance::UpgradeTask.new do |t|
+        t.gem_repositories = [
+          { name: "rubygems", url: "https://rubygems.org" },
+          { name: "internal", url: "https://gems.cbp-org.internal" }
+        ]
+      end
+      """
+    When I successfully run `rake upgrade:info:repos`
+    Then the output should contain "rubygems"
+    And the output should contain "gems.cbp-org.internal"
+
   Scenario: Works with single repository
     Given a file named "Rakefile" with:
       """

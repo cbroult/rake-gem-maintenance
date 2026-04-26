@@ -44,3 +44,14 @@ Feature: DualUpgradeTask for both rubygems.org and cbp-org gems
       ```
     When I successfully run `rake -T upgrade:prepare_version`
     Then the output should contain "upgrade:prepare_version"
+
+  Scenario: DualUpgradeTask has info:repos task showing both repos
+    Given a file named "Rakefile" with:
+      ```
+      require "rake/gem/maintenance/upgrade_task"
+
+      Rake::GemMaintenance::DualUpgradeTask.new
+      ```
+    When I successfully run `rake upgrade:info:repos`
+    Then the output should contain "rubygems"
+    And the output should contain "cbp-org"
