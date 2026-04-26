@@ -63,9 +63,12 @@ Feature: Upgrade task multi-repository publishing
       pipeline: ["branch", "gems", "verify", "commit", "version:bump", "prepare_version", "release", "push"]
       """
 
-  Scenario: prepare_version task is skipped when no gemspec exists
-    When I successfully run `rake upgrade:prepare_version`
-    Then the output should not contain "[INFO]"
+  Scenario: prepare_version task fails when no gemspec exists
+    When I run `rake upgrade:prepare_version`
+    Then it should fail with:
+      """
+      [ERROR] No gemspec found - cannot check version/upgrade
+      """
 
   Scenario: prepare_version outputs info when gemspec exists with unpversioned version
     Given a file named "test-gem.gemspec" with:

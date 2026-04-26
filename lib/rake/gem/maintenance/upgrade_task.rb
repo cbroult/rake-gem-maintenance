@@ -62,6 +62,16 @@ module Rake
         Gem::Specification.load(gemspec).version.to_s
       end
 
+      def repo_available?(repo)
+        url = "#{repo[:url]}/api/v1/gems"
+        URI.parse(url).open { false }
+        true
+      rescue StandardError
+        false
+      end
+
+      public
+
       def define_tasks
         define_top_level_task
         define_info_tasks
@@ -82,7 +92,10 @@ module Rake
             task :repos do
               puts "Gem repositories:"
               task_instance.gem_repositories.each do |repo|
-                puts "  - #{repo[:name]}: #{repo[:url]}"
+                available = task_instance.send(:repo_available?, repo)
+                status = available ? "✓" : "✗"
+                avail_text = available ? "AVAILABLE" : "NOT AVAILABLE"
+                puts "  - #{repo[:name]} (#{status}) - #{avail_text}: #{repo[:url]}"
               end
             end
 
@@ -193,8 +206,10 @@ module Rake
 
       # rubocop:disable Metrics/AbcSize
       def check_version_on_repositories
-        return unless gem_name
-        return unless gem_version
+        unless gem_name && gem_version
+          puts "[ERROR] No gemspec found - cannot check version/upgrade"
+          abort
+        end
 
         publisher = gem_publisher_class.new(gem_repositories)
         publisher.check_all_repositories(gem_name)
