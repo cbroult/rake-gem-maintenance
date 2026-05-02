@@ -12,6 +12,7 @@ gem "guard-cucumber"
 gem "guard-rspec"
 gem "guard-rubocop"
 gem "ostruct"
+gem "rdoc"
 gem "rspec"
 gem "rubocop"
 gem "rubocop-rake", require: false
