@@ -2,6 +2,7 @@
 
 require "rake"
 require "rake/tasklib"
+require_relative "credential_store"
 
 module Rake
   module GemMaintenance
@@ -15,7 +16,7 @@ module Rake
     class RenewApiKeyTask < ::Rake::TaskLib
       attr_accessor :namespace_name, :host, :api_key_env_var, :ci_environment,
                     :woodpecker_server, :woodpecker_org, :woodpecker_secret_name,
-                    :username_env_var, :password_env_var
+                    :username_env_var, :password_env_var, :credential_store
 
       def initialize(namespace_name = :upgrade)
         super()
@@ -35,6 +36,7 @@ module Rake
         @woodpecker_secret_name = "rubygems_api_key"
         @username_env_var = "RUBYGEMS_USERNAME"
         @password_env_var = "RUBYGEMS_PASSWORD"
+        @credential_store = CredentialStore.new
       end
 
       def define_tasks
@@ -46,25 +48,46 @@ module Rake
       end
 
       def run_renewal
+        load_from_credential_store
         abort_if_ci
         username, password = prompt_credentials
-        otp = OtpProvider.new.otp_for("rubygems")
+        prompt_otp_seed_if_missing
+        otp = OtpProvider.new.otp_for("rubygems", otp_seed_env_var: "RUBYGEMS_OTP_SEED")
         api_key = RubyGemsApiKeyCreator.new(host: host).create(username, password, otp: otp)
         puts "\n[INFO] New API key generated."
+        save_to_credential_store(username, api_key)
         store_in_woodpecker(api_key)
+      end
+
+      def load_from_credential_store
+        credential_store.apply_to_env(username_env_var: username_env_var, api_key_env_var: api_key_env_var)
+      end
+
+      def save_to_credential_store(username, api_key)
+        credential_store.update(username: username, api_key: api_key, api_key_env_var: api_key_env_var)
       end
 
       def abort_if_ci
         return unless ci_environment.ci?
-        return unless env_credential(username_env_var).nil?
 
-        abort "[ERROR] Set #{username_env_var} and #{password_env_var} CI secrets to run renewal unattended."
+        missing = [username_env_var, password_env_var].select { |v| env_credential(v).nil? }
+        return if missing.empty?
+
+        abort "[ERROR] Set #{missing.join(' and ')} CI secrets to run renewal unattended."
       end
 
       def prompt_credentials
         username = env_credential(username_env_var) || prompt_username
         password = env_credential(password_env_var) || read_password("rubygems.org password: ")
         [username, password]
+      end
+
+      def prompt_otp_seed_if_missing
+        return if ENV.fetch("RUBYGEMS_OTP_SEED", nil)&.then { |s| !s.empty? }
+
+        print "rubygems.org TOTP seed (base32, blank if MFA not enabled): "
+        seed = $stdin.gets&.chomp
+        ENV["RUBYGEMS_OTP_SEED"] = seed unless seed.nil? || seed.empty?
       end
 
       def env_credential(env_var)

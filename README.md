@@ -76,6 +76,23 @@ Rake::GemMaintenance::UpgradeTask.new
 See [features/upgrade_task/repos_configuration.feature](features/upgrade_task/repos_configuration.feature)
 for all configuration options including geminabox and dual publishing.
 
+### Local credential store
+
+After the first successful `upgrade:renew_api_key` run, the API key and OTP seed are saved to:
+
+```
+~/.config/rake-gem-maintenance/credentials.yml   # Linux / Mac  (respects $XDG_CONFIG_HOME)
+%APPDATA%\rake-gem-maintenance\credentials.yml   # Windows
+```
+
+The file is created with `0600` permissions (owner-read-only on Unix). It stores `username`,
+`gem_host_api_key`, and `rubygems_otp_seed` — **never the password**. Any project using
+`require "rake/gem_maintenance/install_tasks"` automatically loads the key and OTP seed from
+this file at startup, so `gem push` works without any manual env-var setup.
+
+See [features/upgrade_task/credential_store.feature](features/upgrade_task/credential_store.feature)
+for the full behaviour specification.
+
 ### API key renewal
 
 API keys can be rotated in two ways:
