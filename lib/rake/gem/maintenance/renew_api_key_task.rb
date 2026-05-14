@@ -57,7 +57,7 @@ module Rake
       end
 
       def generate_api_key(username, password)
-        otp = OtpProvider.new.otp_for("rubygems")
+        otp = OtpProvider.new.otp_for("rubygems", otp_seed_env_var: "RUBYGEMS_OTP_SEED")
         RubyGemsApiKeyCreator.new(host: host).create(username, password, otp: otp)
       end
 

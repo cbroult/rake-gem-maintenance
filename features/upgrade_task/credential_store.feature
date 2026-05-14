@@ -43,7 +43,7 @@ Feature: CredentialStore persists API key and OTP seed locally
     Then the output should contain "from-env"
     And the output should not contain "from-file"
 
-  Scenario: renew_api_key does not abort in CI when username is in credentials file
+  Scenario: renew_api_key in CI uses username from credentials file without error
     Given a file named ".config/rake-gem-maintenance/credentials.yml" with:
       """
       username: stored-user
