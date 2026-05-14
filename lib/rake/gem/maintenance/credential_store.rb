@@ -2,6 +2,7 @@
 
 require "fileutils"
 require "yaml"
+require "rubygems"
 
 module Rake
   module GemMaintenance
@@ -67,7 +68,7 @@ module Rake
 
       def set_env_if_absent(env_var, value)
         return unless value && !value.empty?
-        return if ENV.fetch(env_var, nil)&.then { |v| !v.empty? }
+        return if (existing = ENV.fetch(env_var, nil)) && !existing.empty?
 
         ENV[env_var] = value
       end

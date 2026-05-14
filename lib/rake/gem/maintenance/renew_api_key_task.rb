@@ -48,23 +48,23 @@ module Rake
       end
 
       def run_renewal
-        load_from_credential_store
+        credential_store.apply_to_env(username_env_var: username_env_var, api_key_env_var: api_key_env_var)
         abort_if_ci
         username, password = prompt_credentials
         prompt_otp_seed_if_missing
-        otp = OtpProvider.new.otp_for("rubygems", otp_seed_env_var: "RUBYGEMS_OTP_SEED")
-        api_key = RubyGemsApiKeyCreator.new(host: host).create(username, password, otp: otp)
+        api_key = generate_api_key(username, password)
+        save_and_distribute(username, api_key)
+      end
+
+      def generate_api_key(username, password)
+        otp = OtpProvider.new.otp_for("rubygems")
+        RubyGemsApiKeyCreator.new(host: host).create(username, password, otp: otp)
+      end
+
+      def save_and_distribute(username, api_key)
         puts "\n[INFO] New API key generated."
-        save_to_credential_store(username, api_key)
-        store_in_woodpecker(api_key)
-      end
-
-      def load_from_credential_store
-        credential_store.apply_to_env(username_env_var: username_env_var, api_key_env_var: api_key_env_var)
-      end
-
-      def save_to_credential_store(username, api_key)
         credential_store.update(username: username, api_key: api_key, api_key_env_var: api_key_env_var)
+        store_in_woodpecker(api_key)
       end
 
       def abort_if_ci
@@ -83,11 +83,11 @@ module Rake
       end
 
       def prompt_otp_seed_if_missing
-        return if ENV.fetch("RUBYGEMS_OTP_SEED", nil)&.then { |s| !s.empty? }
+        return if (seed = ENV.fetch("RUBYGEMS_OTP_SEED", nil)) && !seed.empty?
 
-        print "rubygems.org TOTP seed (base32, blank if MFA not enabled): "
+        print "rubygems.org OTP seed (TOTP secret, not a code): "
         seed = $stdin.gets&.chomp
-        ENV["RUBYGEMS_OTP_SEED"] = seed unless seed.nil? || seed.empty?
+        ENV["RUBYGEMS_OTP_SEED"] = seed if seed && !seed.empty?
       end
 
       def env_credential(env_var)

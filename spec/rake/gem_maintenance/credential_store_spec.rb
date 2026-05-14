@@ -73,6 +73,11 @@ RSpec.describe Rake::GemMaintenance::CredentialStore do
       store.write(username: "alice")
       expect(File.stat(path).mode & 0o777).to eq(0o600)
     end
+
+    it "does not store keys with nil values" do
+      store.write(gem_host_api_key: "key123")
+      expect(store.read).not_to have_key(:rubygems_otp_seed)
+    end
   end
 
   describe "#apply_to_env" do
