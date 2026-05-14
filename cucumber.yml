@@ -1,2 +1,2 @@
-default: --strict --publish-quiet --format progress
-verbose: --strict --publish-quiet --format pretty
+default: --strict --publish-quiet --format progress --tags "not @documentation"
+verbose: --strict --publish-quiet --format pretty --tags "not @documentation"
