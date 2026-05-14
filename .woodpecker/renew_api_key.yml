@@ -1,0 +1,47 @@
+when:
+  - event: cron
+    cron: monthly-renew-api-key
+  - event: manual
+
+labels:
+  platform: linux
+
+clone:
+  git:
+    image: woodpeckerci/plugin-git:2.8.0
+    settings:
+      skip_verify: true
+
+steps:
+  - name: renew-api-key
+    image: ruby:4.0.2-alpine
+    backend_options:
+      docker:
+        network_mode: host
+    environment:
+      RUBYGEMS_USERNAME:
+        from_secret: rubygems_username
+      RUBYGEMS_PASSWORD:
+        from_secret: rubygems_password
+      RUBYGEMS_OTP_SEED:
+        from_secret: rubygems_otp_seed
+      WOODPECKER_TOKEN:
+        from_secret: woodpecker_api_token
+      WOODPECKER_SERVER: "https://ci.cbp-org.internal"
+    commands:
+      - apk add --no-cache build-base
+      - bundle install --jobs 4 --retry 3
+      - bundle exec rake upgrade:renew_api_key
+
+  - name: badge
+    image: docker-registry.cbp-org.internal/badge-reporter:latest
+    when:
+      status: [success, failure]
+    backend_options:
+      docker:
+        network_mode: host
+    environment:
+      BADGE_SECRET:
+        from_secret: badge_service_token
+    commands:
+      - badge report renew-api-key

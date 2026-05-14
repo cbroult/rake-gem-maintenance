@@ -1,0 +1,52 @@
+# publish.yml — build and publish rake-gem-maintenance to rubygems.org
+#
+# Triggers:
+#   - push to main (auto-publish on every merge)
+#   - manual (ad-hoc publish on demand)
+#
+# Required Woodpecker secrets (org-level cbp-org):
+#   rubygems_api_key    — rubygems.org API key (set at https://ci.cbp-org.internal)
+#   rubygems_otp_seed   — base32 TOTP seed for rubygems.org 2FA (already registered)
+#   badge_service_token — write token for badge.cbp-org.internal
+
+when:
+  event: [push, manual]
+  branch: main
+
+labels:
+  platform: linux
+
+clone:
+  git:
+    image: woodpeckerci/plugin-git:2.8.0
+    settings:
+      skip_verify: true
+
+steps:
+  - name: publish-gem
+    image: ruby:4.0.2-alpine
+    backend_options:
+      docker:
+        network_mode: host
+    environment:
+      GEM_HOST_API_KEY:
+        from_secret: rubygems_api_key
+      RUBYGEMS_OTP_SEED:
+        from_secret: rubygems_otp_seed
+    commands:
+      - apk add --no-cache build-base
+      - bundle install --jobs 4 --retry 3
+      - ruby scripts/ci_publish_rubygems.rb
+
+  - name: badge
+    image: docker-registry.cbp-org.internal/badge-reporter:latest
+    when:
+      status: [success, failure]
+    backend_options:
+      docker:
+        network_mode: host
+    environment:
+      BADGE_SECRET:
+        from_secret: badge_service_token
+    commands:
+      - badge report publish

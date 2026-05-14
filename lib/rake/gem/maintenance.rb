@@ -2,6 +2,13 @@
 
 require_relative "maintenance/version"
 require_relative "maintenance/version_bump_task"
+require_relative "maintenance/ci_environment"
+require_relative "maintenance/otp_provider"
+require_relative "maintenance/ruby_gems_api_key_creator"
+require_relative "maintenance/woodpecker_secret_store"
+require_relative "maintenance/api_key_renewer"
+require_relative "maintenance/renew_api_key_task"
+require_relative "maintenance/gem_push"
 require_relative "maintenance/gem_publisher"
 require_relative "maintenance/repos"
 require_relative "maintenance/upgrade_task"

@@ -1,0 +1,116 @@
+# frozen_string_literal: true
+
+require "rake"
+require "rake/tasklib"
+
+module Rake
+  module GemMaintenance
+    # Generates a new rubygems.org API key via the rubygems.org API and stores
+    # it in a Woodpecker CI org-level secret. Intended for local developer use only.
+    #
+    # Creates: <namespace>:renew_api_key
+    #
+    # Reads WOODPECKER_SERVER and WOODPECKER_TOKEN (or ~/.config/woodpecker/token)
+    # from the environment.
+    class RenewApiKeyTask < ::Rake::TaskLib
+      attr_accessor :namespace_name, :host, :api_key_env_var, :ci_environment,
+                    :woodpecker_server, :woodpecker_org, :woodpecker_secret_name,
+                    :username_env_var, :password_env_var
+
+      def initialize(namespace_name = :upgrade)
+        super()
+        apply_defaults(namespace_name)
+        define_tasks
+      end
+
+      private
+
+      def apply_defaults(namespace_name)
+        @namespace_name = namespace_name
+        @host = "https://rubygems.org"
+        @api_key_env_var = "GEM_HOST_API_KEY"
+        @ci_environment = CIEnvironment
+        @woodpecker_server = ENV.fetch("WOODPECKER_SERVER", nil)
+        @woodpecker_org = ENV.fetch("WOODPECKER_ORG", "cbp-org")
+        @woodpecker_secret_name = "rubygems_api_key"
+        @username_env_var = "RUBYGEMS_USERNAME"
+        @password_env_var = "RUBYGEMS_PASSWORD"
+      end
+
+      def define_tasks
+        task_instance = self
+        namespace namespace_name do
+          desc "Generate a new rubygems.org API key and store it in Woodpecker CI"
+          task(:renew_api_key) { task_instance.send(:run_renewal) }
+        end
+      end
+
+      def run_renewal
+        abort_if_ci
+        username, password = prompt_credentials
+        otp = OtpProvider.new.otp_for("rubygems")
+        api_key = RubyGemsApiKeyCreator.new(host: host).create(username, password, otp: otp)
+        puts "\n[INFO] New API key generated."
+        store_in_woodpecker(api_key)
+      end
+
+      def abort_if_ci
+        return unless ci_environment.ci?
+        return unless env_credential(username_env_var).nil?
+
+        abort "[ERROR] Set #{username_env_var} and #{password_env_var} CI secrets to run renewal unattended."
+      end
+
+      def prompt_credentials
+        username = env_credential(username_env_var) || prompt_username
+        password = env_credential(password_env_var) || read_password("rubygems.org password: ")
+        [username, password]
+      end
+
+      def env_credential(env_var)
+        value = ENV.fetch(env_var, nil)
+        value&.empty? ? nil : value
+      end
+
+      def prompt_username
+        print "rubygems.org username: "
+        value = $stdin.gets&.chomp
+        abort "[ERROR] No username provided." if value.nil? || value.empty?
+        value
+      end
+
+      def read_password(prompt)
+        require "io/console"
+        print prompt
+        password = $stdin.noecho(&:gets)&.chomp
+        puts
+        password
+      rescue LoadError
+        print prompt
+        $stdin.gets&.chomp
+      end
+
+      def store_in_woodpecker(api_key)
+        unless woodpecker_server
+          puts "[INFO] Set WOODPECKER_SERVER to auto-store the key in Woodpecker CI."
+          puts "[INFO] New API key (store as secret '#{woodpecker_secret_name}'): #{api_key}"
+          return
+        end
+
+        token = read_woodpecker_token
+        abort "[ERROR] No Woodpecker token. Set WOODPECKER_TOKEN or run woodpecker-cli setup." unless token
+
+        WoodpeckerSecretStore.new(server: woodpecker_server, org: woodpecker_org, token: token)
+                             .store(woodpecker_secret_name, api_key)
+        puts "[SUCCESS] API key stored in Woodpecker secret '#{woodpecker_secret_name}'."
+      end
+
+      def read_woodpecker_token
+        ENV.fetch("WOODPECKER_TOKEN", nil) ||
+          File.read(File.expand_path("~/.config/woodpecker/token")).strip
+      rescue Errno::ENOENT
+        nil
+      end
+    end
+  end
+end
