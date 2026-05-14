@@ -54,6 +54,10 @@ Rake::GemMaintenance::UpgradeTask.new do |t|
 end
 ```
 
+## Code Style
+
+- Never add `# rubocop:disable` comments without explicit user permission.
+
 ## Commit Conventions
 
 - Use conventional commit format: `type(scope): subject`

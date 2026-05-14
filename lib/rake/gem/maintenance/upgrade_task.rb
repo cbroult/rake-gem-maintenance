@@ -3,6 +3,9 @@
 require "net/http"
 require "rake"
 require "rake/tasklib"
+require_relative "ci_environment"
+require_relative "otp_provider"
+require_relative "renew_api_key_task"
 require_relative "gem_publisher"
 require_relative "repos"
 
@@ -19,6 +22,12 @@ module Rake
                     :version_bump_task, :update_rubygems, :update_gems,
                     :run_bundle_audit, :auto_pipeline, :gem_repositories,
                     :gem_publisher_class, :gem_name, :gem_version
+
+      attr_writer :renew_api_key_task_class
+
+      def renew_api_key_task_class
+        @renew_api_key_task_class || RenewApiKeyTask
+      end
 
       def initialize(name = :upgrade)
         super()
@@ -85,6 +94,7 @@ module Rake
         define_gems_task
         define_commit_task
         define_push_task
+        define_renew_api_key_task
       end
 
       def define_info_tasks
@@ -184,6 +194,10 @@ module Rake
           desc "Push the upgrade"
           task(:push) { task_instance.send(:push_branch) }
         end
+      end
+
+      def define_renew_api_key_task
+        renew_api_key_task_class.new(name)
       end
 
       def pipeline_tasks
@@ -292,6 +306,15 @@ module Rake
       def apply_default_configuration(name)
         super
         @gem_repositories = Repos.all
+      end
+    end
+
+    # Upgrades gems and publishes to a local geminabox instance only.
+    # Uses Repos.geminabox as default repositories.
+    class GeminaboxUpgradeTask < UpgradeTask
+      def apply_default_configuration(name)
+        super
+        @gem_repositories = Repos.geminabox
       end
     end
   end

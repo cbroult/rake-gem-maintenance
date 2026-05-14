@@ -14,3 +14,27 @@ Feature: Install tasks
     And the output should contain "upgrade:branch"
     And the output should contain "version:bump"
     And the output should contain "bump[type]"
+
+  Scenario: Configures GEM_HOST_API_KEY as the rubygems API key env var
+    Given a file named "Rakefile" with:
+      """
+      require "rake/gem/maintenance/install_tasks"
+
+      task :show_api_key_env_var do
+        puts Rake::GemMaintenance::Repos.rubygems_api_key_env_var
+      end
+      """
+    When I successfully run `rake show_api_key_env_var`
+    Then the output should contain "GEM_HOST_API_KEY"
+
+  Scenario: Configures RUBYGEMS_OTP_SEED as the rubygems OTP seed env var
+    Given a file named "Rakefile" with:
+      """
+      require "rake/gem/maintenance/install_tasks"
+
+      task :show_otp_seed_env_var do
+        puts Rake::GemMaintenance::Repos.rubygems_otp_seed_env_var
+      end
+      """
+    When I successfully run `rake show_otp_seed_env_var`
+    Then the output should contain "RUBYGEMS_OTP_SEED"

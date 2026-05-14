@@ -161,4 +161,33 @@ RSpec.describe Rake::GemMaintenance::UpgradeTask do
       expect(task.gem_repositories).to eq(Rake::GemMaintenance::Repos.all)
     end
   end
+
+  describe Rake::GemMaintenance::GeminaboxUpgradeTask do
+    before { Rake::Task.clear }
+
+    it "defines the upgrade task" do
+      described_class.new
+      expect(Rake::Task.task_defined?("upgrade")).to be true
+    end
+
+    it "uses geminabox repository by default" do
+      task = described_class.new
+      expect(task.gem_repositories).to eq(Rake::GemMaintenance::Repos.geminabox)
+    end
+  end
+
+  describe "upgrade:renew_api_key task" do
+    before { Rake::Task.clear }
+
+    it "defines upgrade:renew_api_key" do
+      described_class.new
+      expect(Rake::Task.task_defined?("upgrade:renew_api_key")).to be true
+    end
+
+    it "is not part of the auto pipeline" do
+      described_class.new
+      prerequisites = Rake::Task["upgrade:auto"].prerequisites
+      expect(prerequisites).not_to include("renew_api_key")
+    end
+  end
 end

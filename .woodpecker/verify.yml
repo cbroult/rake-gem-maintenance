@@ -1,0 +1,38 @@
+when:
+  event: [push, pull_request, manual]
+
+labels:
+  platform: linux
+
+clone:
+  git:
+    image: woodpeckerci/plugin-git:2.8.0
+    settings:
+      skip_verify: true
+
+steps:
+  - name: verify
+    image: ruby:4.0.2-alpine
+    backend_options:
+      docker:
+        network_mode: host
+    environment:
+      CUCUMBER_PUBLISH_QUIET: "true"
+    commands:
+      - apk add --no-cache build-base
+      - mkdir -p /root/.local/share/ruby-advisory-db/gems
+      - bundle install --jobs 4 --retry 3
+      - bundle exec rake verify
+
+  - name: badge
+    image: docker-registry.cbp-org.internal/badge-reporter:latest
+    when:
+      status: [success, failure]
+    backend_options:
+      docker:
+        network_mode: host
+    environment:
+      BADGE_SECRET:
+        from_secret: badge_service_token
+    commands:
+      - badge report verify
