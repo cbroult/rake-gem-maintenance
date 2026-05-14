@@ -46,6 +46,46 @@ Rake::GemMaintenance::VersionBumpTask.new do |t|
 end
 ```
 
+## Automated Publishing to rubygems.org
+
+Set two environment variables and `gem push` runs fully unattended — including TOTP 2FA code
+generation if your rubygems.org account has MFA enabled.
+
+| Env var | Purpose |
+|---|---|
+| `GEM_HOST_API_KEY` | rubygems.org API key (scoped to push) |
+| `RUBYGEMS_OTP_SEED` | Base32 TOTP seed — auto-generates the 2FA code; omit if MFA is disabled |
+
+### Quick setup
+
+`require "rake/gem_maintenance/install_tasks"` pre-configures both env var names automatically —
+no extra Ruby needed. See [features/install_tasks.feature](features/install_tasks.feature) for
+the full workflow.
+
+### Custom env var names
+
+```ruby
+require "rake/gem/maintenance"
+
+Rake::GemMaintenance::Repos.rubygems_api_key_env_var  = "MY_RUBYGEMS_KEY"
+Rake::GemMaintenance::Repos.rubygems_otp_seed_env_var = "MY_OTP_SEED"
+
+Rake::GemMaintenance::UpgradeTask.new
+```
+
+See [features/upgrade_task/repos_configuration.feature](features/upgrade_task/repos_configuration.feature)
+for all configuration options including geminabox and dual publishing.
+
+### API key renewal
+
+```bash
+rake upgrade:renew_api_key
+```
+
+Rotates the rubygems.org API key interactively. In CI, set `RUBYGEMS_USERNAME` and
+`RUBYGEMS_PASSWORD` for unattended renewal. See
+[features/upgrade_task/renew_api_key.feature](features/upgrade_task/renew_api_key.feature).
+
 ## License
 
 The gem is available as open source under the terms of the [MIT License](LICENSE.txt).
