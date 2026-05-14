@@ -54,6 +54,16 @@ Rake::GemMaintenance::UpgradeTask.new do |t|
 end
 ```
 
+## Repository & CI Workflow
+
+**GitHub** (`github.com/cbroult/rake-gem-maintenance`) is the canonical source.
+**Forgejo** (`git.cbp-org.internal/forgejo-admin/rake-gem-maintenance`) is a read-only pull mirror.
+
+- All pull requests go on **GitHub only**. Never open PRs on Forgejo.
+- Forgejo mirrors GitHub automatically every 10 minutes — never push to the `forgejo` remote manually.
+- **Woodpecker CI** (`ci.cbp-org.internal`) watches Forgejo and runs verify/publish/renew pipelines.
+- Local clone only needs the `origin` (GitHub) remote. Remove `forgejo` if present: `git remote remove forgejo`.
+
 ## Code Style
 
 - Never add `# rubocop:disable` comments without explicit user permission.
