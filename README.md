@@ -78,13 +78,31 @@ for all configuration options including geminabox and dual publishing.
 
 ### API key renewal
 
+API keys can be rotated in two ways:
+
+**Automatic** — when `gem push` returns a 401/403, the publisher transparently obtains a new
+key using `RUBYGEMS_USERNAME` + `RUBYGEMS_PASSWORD` (+ TOTP from `RUBYGEMS_OTP_SEED` if MFA is
+enabled), then retries the push once. No intervention needed.
+
+**On-demand** — run the task explicitly to rotate ahead of expiry:
+
 ```bash
 rake upgrade:renew_api_key
 ```
 
-Rotates the rubygems.org API key interactively. In CI, set `RUBYGEMS_USERNAME` and
-`RUBYGEMS_PASSWORD` for unattended renewal. See
-[features/upgrade_task/renew_api_key.feature](features/upgrade_task/renew_api_key.feature).
+Locally this prompts for credentials interactively. In CI, supply all three env vars for
+unattended operation:
+
+| Env var | Purpose |
+|---|---|
+| `RUBYGEMS_USERNAME` | rubygems.org account username or email |
+| `RUBYGEMS_PASSWORD` | rubygems.org account password |
+| `RUBYGEMS_OTP_SEED` | Same TOTP seed as above — reused here to authenticate the key-creation request |
+
+The new key is written back to the `GEM_HOST_API_KEY` CI secret automatically (requires
+`WOODPECKER_TOKEN` and `WOODPECKER_SERVER` when running under Woodpecker CI).
+
+See [features/upgrade_task/renew_api_key.feature](features/upgrade_task/renew_api_key.feature).
 
 ## License
 
