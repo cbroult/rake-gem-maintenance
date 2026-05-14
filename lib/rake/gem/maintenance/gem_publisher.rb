@@ -9,8 +9,12 @@ module Rake
     class GemPublisher
       attr_reader :repositories, :warnings, :failed_repositories, :successful_repos
 
-      def initialize(repositories = default_repositories)
+      def initialize(repositories = default_repositories,
+                     otp_provider: OtpProvider.new,
+                     ci_environment: CIEnvironment)
         @repositories = repositories
+        @otp_provider = otp_provider
+        @ci_environment = ci_environment
         @warnings = []
         @failed_pushes = []
         @failed_repositories = []
@@ -76,14 +80,21 @@ module Rake
       end
 
       def push(gem_file, repository:)
-        cmd = "gem push #{gem_file} --host #{repository[:url]}"
-        result = system(cmd)
-        if result
-          @published_files << gem_file
-          @successful_repos << repository[:name]
-        end
+        result = GemPush.new(gem_file, repository, @otp_provider).attempt
+        return record_success(gem_file, repository) if result.success
+
+        record_push_failure(repository, result.error)
       rescue StandardError => e
         @failed_pushes << { repository: repository[:name], error: e.message }
+      end
+
+      def record_success(gem_file, repository)
+        @published_files << gem_file
+        @successful_repos << repository[:name]
+      end
+
+      def record_push_failure(repository, message)
+        @failed_pushes << { repository: repository[:name], error: message.strip }
       end
 
       def version_exists_on_all_repos?(gem_name, version)
