@@ -8,7 +8,7 @@ Feature: RenewApiKeyTask for renewing rubygems.org API key
       ```
       require "rake/gem/maintenance"
 
-      Rake::GemMaintenance::RenewApiKeyTask.new
+      Rake::Gem::Maintenance::RenewApiKeyTask.new
       ```
     When I successfully run `rake -T upgrade`
     Then the output should contain "upgrade:renew_api_key"
@@ -18,7 +18,7 @@ Feature: RenewApiKeyTask for renewing rubygems.org API key
       ```
       require "rake/gem/maintenance"
 
-      Rake::GemMaintenance::RenewApiKeyTask.new(:deploy)
+      Rake::Gem::Maintenance::RenewApiKeyTask.new(:deploy)
       ```
     When I successfully run `rake -T deploy`
     Then the output should contain "deploy:renew_api_key"
@@ -28,7 +28,7 @@ Feature: RenewApiKeyTask for renewing rubygems.org API key
       ```
       require "rake/gem/maintenance"
 
-      Rake::GemMaintenance::RenewApiKeyTask.new
+      Rake::Gem::Maintenance::RenewApiKeyTask.new
       ```
     When I set the environment variables to:
       | variable | value |

@@ -1,4 +1,4 @@
-# Rake::GemMaintenance
+# Rake::Gem::Maintenance
 
 [![Ruby](https://github.com/cbroult/rake-gem-maintenance/actions/workflows/main.yml/badge.svg)](https://github.com/cbroult/rake-gem-maintenance/actions/workflows/main.yml)
 [![Dependabot](https://img.shields.io/badge/dependabot-enabled-blue?logo=dependabot)](https://github.com/cbroult/rake-gem-maintenance/network/updates)
@@ -18,7 +18,7 @@ gem "rake-gem-maintenance"
 Add to your Rakefile for default behavior:
 
 ```ruby
-require "rake/gem_maintenance/install_tasks"
+require "rake/gem/maintenance/install_tasks"
 ```
 
 This defines:
@@ -33,15 +33,15 @@ This defines:
 ## Customization
 
 ```ruby
-require "rake/gem_maintenance"
+require "rake/gem/maintenance"
 
-Rake::GemMaintenance::UpgradeTask.new do |t|
+Rake::Gem::Maintenance::UpgradeTask.new do |t|
   t.main_branch = "develop"
   t.upgrade_branch = "chore/upgrade-deps"
   t.commit_message = "chore: upgrade dependencies"
 end
 
-Rake::GemMaintenance::VersionBumpTask.new do |t|
+Rake::Gem::Maintenance::VersionBumpTask.new do |t|
   t.default_type = "minor"
 end
 ```
@@ -76,7 +76,7 @@ The file is `0600` (owner-read-only on Unix). The **password is never written to
 
 ### Step 2 — All future local runs are automatic
 
-Any project using `require "rake/gem_maintenance/install_tasks"` automatically reads the
+Any project using `require "rake/gem/maintenance/install_tasks"` automatically reads the
 credential file at startup and sets `GEM_HOST_API_KEY` and `RUBYGEMS_OTP_SEED` in the process
 environment. Running `rake upgrade` needs no manual credential setup from this point on.
 
@@ -106,10 +106,10 @@ See [features/upgrade_task/renew_api_key.feature](features/upgrade_task/renew_ap
 ```ruby
 require "rake/gem/maintenance"
 
-Rake::GemMaintenance::Repos.rubygems_api_key_env_var  = "MY_RUBYGEMS_KEY"
-Rake::GemMaintenance::Repos.rubygems_otp_seed_env_var = "MY_OTP_SEED"
+Rake::Gem::Maintenance::Repos.rubygems_api_key_env_var  = "MY_RUBYGEMS_KEY"
+Rake::Gem::Maintenance::Repos.rubygems_otp_seed_env_var = "MY_OTP_SEED"
 
-Rake::GemMaintenance::UpgradeTask.new
+Rake::Gem::Maintenance::UpgradeTask.new
 ```
 
 See [features/upgrade_task/repos_configuration.feature](features/upgrade_task/repos_configuration.feature)

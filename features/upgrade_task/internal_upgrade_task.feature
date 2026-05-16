@@ -8,7 +8,7 @@ Feature: InternalUpgradeTask for cbp-org only gems
       ```
       require "rake/gem/maintenance/upgrade_task"
 
-      Rake::GemMaintenance::InternalUpgradeTask.new
+      Rake::Gem::Maintenance::InternalUpgradeTask.new
       ```
     When I successfully run `rake -T upgrade`
     Then the output should contain "upgrade:auto"
@@ -23,7 +23,7 @@ Feature: InternalUpgradeTask for cbp-org only gems
       ```
       require "rake/gem/maintenance/upgrade_task"
 
-      upgrade_task = Rake::GemMaintenance::InternalUpgradeTask.new
+      upgrade_task = Rake::Gem::Maintenance::InternalUpgradeTask.new
 
       task :show_repos do
         puts "Repositories: #{upgrade_task.gem_repositories}"
@@ -40,7 +40,7 @@ Feature: InternalUpgradeTask for cbp-org only gems
       ```
       require "rake/gem/maintenance/upgrade_task"
 
-      Rake::GemMaintenance::InternalUpgradeTask.new
+      Rake::Gem::Maintenance::InternalUpgradeTask.new
       ```
     When I successfully run `rake -T upgrade:prepare_version`
     Then the output should contain "upgrade:prepare_version"
@@ -50,7 +50,7 @@ Feature: InternalUpgradeTask for cbp-org only gems
       ```
       require "rake/gem/maintenance/upgrade_task"
 
-      Rake::GemMaintenance::InternalUpgradeTask.new
+      Rake::Gem::Maintenance::InternalUpgradeTask.new
       ```
     When I successfully run `rake upgrade:info:repos`
     Then the output should contain "cbp-org"

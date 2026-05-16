@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Rake::GemMaintenance::UpgradeTask do
+RSpec.describe Rake::Gem::Maintenance::UpgradeTask do
   before do
     Rake::Task.clear
   end
@@ -130,7 +130,7 @@ RSpec.describe Rake::GemMaintenance::UpgradeTask do
     end
   end
 
-  describe Rake::GemMaintenance::InternalUpgradeTask do
+  describe Rake::Gem::Maintenance::InternalUpgradeTask do
     before do
       Rake::Task.clear
     end
@@ -142,11 +142,11 @@ RSpec.describe Rake::GemMaintenance::UpgradeTask do
 
     it "uses internal repository by default" do
       task = described_class.new
-      expect(task.gem_repositories).to eq(Rake::GemMaintenance::Repos.internal)
+      expect(task.gem_repositories).to eq(Rake::Gem::Maintenance::Repos.internal)
     end
   end
 
-  describe Rake::GemMaintenance::DualUpgradeTask do
+  describe Rake::Gem::Maintenance::DualUpgradeTask do
     before do
       Rake::Task.clear
     end
@@ -158,11 +158,11 @@ RSpec.describe Rake::GemMaintenance::UpgradeTask do
 
     it "uses both repositories by default" do
       task = described_class.new
-      expect(task.gem_repositories).to eq(Rake::GemMaintenance::Repos.all)
+      expect(task.gem_repositories).to eq(Rake::Gem::Maintenance::Repos.all)
     end
   end
 
-  describe Rake::GemMaintenance::GeminaboxUpgradeTask do
+  describe Rake::Gem::Maintenance::GeminaboxUpgradeTask do
     before { Rake::Task.clear }
 
     it "defines the upgrade task" do
@@ -172,7 +172,7 @@ RSpec.describe Rake::GemMaintenance::UpgradeTask do
 
     it "uses geminabox repository by default" do
       task = described_class.new
-      expect(task.gem_repositories).to eq(Rake::GemMaintenance::Repos.geminabox)
+      expect(task.gem_repositories).to eq(Rake::Gem::Maintenance::Repos.geminabox)
     end
   end
 

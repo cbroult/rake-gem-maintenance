@@ -8,7 +8,7 @@ Feature: Upgrade task definition
       """
       require "rake/gem/maintenance/upgrade_task"
 
-      Rake::GemMaintenance::UpgradeTask.new
+      Rake::Gem::Maintenance::UpgradeTask.new
       """
 
   Scenario: Defines the upgrade alias task

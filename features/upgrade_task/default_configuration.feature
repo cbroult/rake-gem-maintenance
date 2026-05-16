@@ -8,7 +8,7 @@ Feature: Upgrade task default configuration
       """
       require "rake/gem/maintenance/upgrade_task"
 
-      Rake::GemMaintenance::UpgradeTask.new
+      Rake::Gem::Maintenance::UpgradeTask.new
       """
 
   Scenario: Lists all expected subtasks
@@ -24,7 +24,7 @@ Feature: Upgrade task default configuration
       """
       require "rake/gem/maintenance/upgrade_task"
 
-      Rake::GemMaintenance::UpgradeTask.new
+      Rake::Gem::Maintenance::UpgradeTask.new
 
       task :show_pipeline do
         auto_task = Rake::Task["upgrade:auto"]

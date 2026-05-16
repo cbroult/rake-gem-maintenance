@@ -2,7 +2,7 @@
 
 require "tmpdir"
 
-RSpec.describe Rake::GemMaintenance::CredentialStore do
+RSpec.describe Rake::Gem::Maintenance::CredentialStore do
   subject(:store) { described_class.new(path: creds_path) }
 
   let(:tmp_dir) { Dir.mktmpdir }

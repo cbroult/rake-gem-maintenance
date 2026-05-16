@@ -8,7 +8,7 @@ Feature: DualUpgradeTask for both rubygems.org and cbp-org gems
       ```
       require "rake/gem/maintenance/upgrade_task"
 
-      Rake::GemMaintenance::DualUpgradeTask.new
+      Rake::Gem::Maintenance::DualUpgradeTask.new
       ```
     When I successfully run `rake -T upgrade`
     Then the output should contain "upgrade:auto"
@@ -23,7 +23,7 @@ Feature: DualUpgradeTask for both rubygems.org and cbp-org gems
       ```
       require "rake/gem/maintenance/upgrade_task"
 
-      upgrade_task = Rake::GemMaintenance::DualUpgradeTask.new
+      upgrade_task = Rake::Gem::Maintenance::DualUpgradeTask.new
 
       task :show_repos do
         puts "Repositories: #{upgrade_task.gem_repositories}"
@@ -40,7 +40,7 @@ Feature: DualUpgradeTask for both rubygems.org and cbp-org gems
       ```
       require "rake/gem/maintenance/upgrade_task"
 
-      Rake::GemMaintenance::DualUpgradeTask.new
+      Rake::Gem::Maintenance::DualUpgradeTask.new
       ```
     When I successfully run `rake -T upgrade:prepare_version`
     Then the output should contain "upgrade:prepare_version"
@@ -50,7 +50,7 @@ Feature: DualUpgradeTask for both rubygems.org and cbp-org gems
       ```
       require "rake/gem/maintenance/upgrade_task"
 
-      Rake::GemMaintenance::DualUpgradeTask.new
+      Rake::Gem::Maintenance::DualUpgradeTask.new
       ```
     When I successfully run `rake upgrade:info:repos`
     Then the output should contain "rubygems"

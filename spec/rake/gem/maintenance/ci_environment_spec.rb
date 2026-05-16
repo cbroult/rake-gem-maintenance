@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Rake::GemMaintenance::CIEnvironment do
+RSpec.describe Rake::Gem::Maintenance::CIEnvironment do
   describe ".ci?" do
     subject(:ci?) { described_class.ci? }
 

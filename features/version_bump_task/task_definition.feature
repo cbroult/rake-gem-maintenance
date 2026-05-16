@@ -8,7 +8,7 @@ Feature: Version bump task definition
       """
       require "rake/gem/maintenance/version_bump_task"
 
-      Rake::GemMaintenance::VersionBumpTask.new
+      Rake::Gem::Maintenance::VersionBumpTask.new
       """
 
   Scenario: Defines the version:bump task

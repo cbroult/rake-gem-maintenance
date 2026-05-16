@@ -8,7 +8,7 @@ Feature: Upgrade task multi-repository publishing
       """
       require "rake/gem/maintenance/upgrade_task"
 
-      Rake::GemMaintenance::UpgradeTask.new do |t|
+      Rake::Gem::Maintenance::UpgradeTask.new do |t|
         t.gem_repositories = [
           { name: "rubygems", url: "https://rubygems.org" },
           { name: "internal", url: "https://gems.cbp-org.internal" }
@@ -21,7 +21,7 @@ Feature: Upgrade task multi-repository publishing
       """
       require "rake/gem/maintenance/upgrade_task"
 
-      Rake::GemMaintenance::UpgradeTask.new
+      Rake::Gem::Maintenance::UpgradeTask.new
       """
     When I successfully run `rake -T upgrade`
     Then the output should contain "upgrade:prepare_version"
@@ -45,7 +45,7 @@ Feature: Upgrade task multi-repository publishing
       """
       require "rake/gem/maintenance/upgrade_task"
 
-      Rake::GemMaintenance::UpgradeTask.new do |t|
+      Rake::Gem::Maintenance::UpgradeTask.new do |t|
         t.gem_repositories = [
           { name: "rubygems", url: "https://rubygems.org" },
           { name: "internal", url: "https://gems.cbp-org.internal" }
@@ -110,7 +110,7 @@ Feature: Upgrade task multi-repository publishing
         end
       end
 
-      Rake::GemMaintenance::UpgradeTask.new do |t|
+      Rake::Gem::Maintenance::UpgradeTask.new do |t|
         t.gem_repositories = [
           { name: "rubygems", url: "https://rubygems.org" },
           { name: "internal", url: "https://gems.cbp-org.internal" }
@@ -126,7 +126,7 @@ Feature: Upgrade task multi-repository publishing
       """
       require "rake/gem/maintenance/upgrade_task"
 
-      Rake::GemMaintenance::UpgradeTask.new do |t|
+      Rake::Gem::Maintenance::UpgradeTask.new do |t|
         t.gem_repositories = [
           { name: "rubygems", url: "https://rubygems.org" },
           { name: "internal", url: "https://gems.cbp-org.internal" }
@@ -142,7 +142,7 @@ Feature: Upgrade task multi-repository publishing
       """
       require "rake/gem/maintenance/upgrade_task"
 
-      Rake::GemMaintenance::UpgradeTask.new do |t|
+      Rake::Gem::Maintenance::UpgradeTask.new do |t|
         t.gem_repositories = [
           { name: "rubygems", url: "https://rubygems.org" }
         ]
@@ -190,7 +190,7 @@ Feature: Upgrade task multi-repository publishing
         end
       end
 
-      Rake::GemMaintenance::UpgradeTask.new do |t|
+      Rake::Gem::Maintenance::UpgradeTask.new do |t|
         t.gem_repositories = [
           { name: "rubygems", url: "https://rubygems.org" },
           { name: "unavailable", url: "https://unavailable.example.com" }
@@ -242,7 +242,7 @@ Feature: Upgrade task multi-repository publishing
         end
       end
 
-      Rake::GemMaintenance::UpgradeTask.new do |t|
+      Rake::Gem::Maintenance::UpgradeTask.new do |t|
         t.gem_repositories = [
           { name: "offline1", url: "https://offline1.example.com" },
           { name: "offline2", url: "https://offline2.example.com" }
@@ -295,7 +295,7 @@ Feature: Upgrade task multi-repository publishing
         end
       end
 
-      Rake::GemMaintenance::UpgradeTask.new do |t|
+      Rake::Gem::Maintenance::UpgradeTask.new do |t|
         t.gem_repositories = [
           { name: "rubygems", url: "https://rubygems.org" },
           { name: "cbp-org", url: "https://gems.cbp-org.internal" }
@@ -345,7 +345,7 @@ Feature: Upgrade task multi-repository publishing
         end
       end
 
-      Rake::GemMaintenance::UpgradeTask.new do |t|
+      Rake::Gem::Maintenance::UpgradeTask.new do |t|
         t.gem_repositories = [
           { name: "rubygems", url: "https://rubygems.org" },
           { name: "cbp-org", url: "https://gems.cbp-org.internal" }
@@ -396,7 +396,7 @@ Feature: Upgrade task multi-repository publishing
         end
       end
 
-      Rake::GemMaintenance::UpgradeTask.new do |t|
+      Rake::Gem::Maintenance::UpgradeTask.new do |t|
         t.gem_repositories = [
           { name: "rubygems", url: "https://rubygems.org" },
           { name: "cbp-org", url: "https://gems.cbp-org.internal" }

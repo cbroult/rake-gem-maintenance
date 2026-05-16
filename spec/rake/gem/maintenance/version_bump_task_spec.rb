@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Rake::GemMaintenance::VersionBumpTask do
+RSpec.describe Rake::Gem::Maintenance::VersionBumpTask do
   before do
     Rake::Task.clear
   end

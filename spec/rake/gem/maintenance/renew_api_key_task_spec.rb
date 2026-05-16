@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Rake::GemMaintenance::RenewApiKeyTask do
+RSpec.describe Rake::Gem::Maintenance::RenewApiKeyTask do
   before { Rake::Task.clear }
 
   describe "task definition" do
@@ -45,16 +45,22 @@ RSpec.describe Rake::GemMaintenance::RenewApiKeyTask do
 
   describe "running the task in CI" do
     let(:ci_environment) { double("CIEnvironment", ci?: true) } # rubocop:disable RSpec/VerifiedDoubles
+    let(:task_lib) { described_class.new }
+
+    around do |ex|
+      with_env("RUBYGEMS_USERNAME" => nil, "RUBYGEMS_PASSWORD" => nil) { ex.run }
+    end
+
+    before do
+      task_lib.ci_environment = ci_environment
+      allow(task_lib.credential_store).to receive(:apply_to_env)
+    end
 
     it "aborts with an actionable error message" do
-      task_lib = described_class.new
-      task_lib.ci_environment = ci_environment
       expect { Rake::Task["upgrade:renew_api_key"].execute }.to raise_error(SystemExit)
     end
 
     it "includes the username env var in the error output" do
-      task_lib = described_class.new
-      task_lib.ci_environment = ci_environment
       task_lib.username_env_var = "MY_RUBYGEMS_USER"
       expect { Rake::Task["upgrade:renew_api_key"].execute }
         .to output(/MY_RUBYGEMS_USER/).to_stderr.and raise_error(SystemExit)

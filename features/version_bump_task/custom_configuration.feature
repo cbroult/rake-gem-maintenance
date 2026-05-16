@@ -8,7 +8,7 @@ Feature: Version bump task custom configuration
       """
       require "rake/gem/maintenance/version_bump_task"
 
-      Rake::GemMaintenance::VersionBumpTask.new do |t|
+      Rake::Gem::Maintenance::VersionBumpTask.new do |t|
         t.namespace_name = :ver
       end
       """
@@ -20,7 +20,7 @@ Feature: Version bump task custom configuration
       """
       require "rake/gem/maintenance/version_bump_task"
 
-      Rake::GemMaintenance::VersionBumpTask.new do |t|
+      Rake::Gem::Maintenance::VersionBumpTask.new do |t|
         t.create_alias = false
       end
       """
@@ -33,7 +33,7 @@ Feature: Version bump task custom configuration
       """
       require "rake/gem/maintenance/version_bump_task"
 
-      Rake::GemMaintenance::VersionBumpTask.new do |t|
+      Rake::Gem::Maintenance::VersionBumpTask.new do |t|
         t.default_type = "minor"
       end
       """

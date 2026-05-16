@@ -8,7 +8,7 @@ Feature: Version bump task validation
       """
       require "rake/gem/maintenance/version_bump_task"
 
-      Rake::GemMaintenance::VersionBumpTask.new
+      Rake::Gem::Maintenance::VersionBumpTask.new
       """
 
   Scenario: Rejects an invalid version type

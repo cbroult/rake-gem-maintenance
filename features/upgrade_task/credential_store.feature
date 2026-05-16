@@ -51,7 +51,7 @@ Feature: CredentialStore persists API key and OTP seed locally
     And a file named "Rakefile" with:
       """
       require "rake/gem/maintenance"
-      Rake::GemMaintenance::RenewApiKeyTask.new
+      Rake::Gem::Maintenance::RenewApiKeyTask.new
       """
     When I set the environment variables to:
       | variable          | value    |
@@ -64,7 +64,7 @@ Feature: CredentialStore persists API key and OTP seed locally
     Given a file named "write_creds.rb" with:
       """
       require "rake/gem/maintenance/credential_store"
-      store = Rake::GemMaintenance::CredentialStore.new
+      store = Rake::Gem::Maintenance::CredentialStore.new
       store.write(gem_host_api_key: "test-key")
       puts format("%o", File.stat(store.path).mode & 0o777)
       """

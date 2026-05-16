@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Rake::GemMaintenance::RubyGemsApiKeyCreator do
+RSpec.describe Rake::Gem::Maintenance::RubyGemsApiKeyCreator do
   subject(:creator) { described_class.new(host: "https://rubygems.org") }
 
   let(:http) { instance_double(Net::HTTP) }

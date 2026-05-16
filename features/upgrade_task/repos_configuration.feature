@@ -9,7 +9,7 @@ Scenario: Repos.internal returns only cbp-org repository
       require "rake/gem/maintenance/repos"
 
       task :show_repos do
-        puts Rake::GemMaintenance::Repos.internal.inspect
+        puts Rake::Gem::Maintenance::Repos.internal.inspect
       end
       """
     When I successfully run `rake show_repos`
@@ -21,7 +21,7 @@ Scenario: Repos.internal returns only cbp-org repository
       require "rake/gem/maintenance/repos"
 
       task :show_repos do
-        puts Rake::GemMaintenance::Repos.all.inspect
+        puts Rake::Gem::Maintenance::Repos.all.inspect
       end
       """
     When I successfully run `rake show_repos`
@@ -33,7 +33,7 @@ Scenario: Repos.internal returns only cbp-org repository
       require "rake/gem/maintenance/repos"
 
       task :show_repos do
-        puts Rake::GemMaintenance::Repos.rubygems.inspect
+        puts Rake::Gem::Maintenance::Repos.rubygems.inspect
       end
       """
     When I successfully run `rake show_repos`
@@ -45,8 +45,8 @@ Scenario: Repos.internal returns only cbp-org repository
       require "rake/gem/maintenance/repos"
 
       task :show_repos do
-        default_repos = Rake::GemMaintenance::Repos.default
-        rubygems_repos = Rake::GemMaintenance::Repos.rubygems
+        default_repos = Rake::Gem::Maintenance::Repos.default
+        rubygems_repos = Rake::Gem::Maintenance::Repos.rubygems
         puts "equal: " + (default_repos == rubygems_repos).to_s
       end
       """
@@ -59,8 +59,8 @@ Scenario: Repos.internal returns only cbp-org repository
       require "rake/gem/maintenance/upgrade_task"
       require "rake/gem/maintenance/repos"
 
-      Rake::GemMaintenance::UpgradeTask.new do |t|
-        t.gem_repositories = Rake::GemMaintenance::Repos.internal
+      Rake::Gem::Maintenance::UpgradeTask.new do |t|
+        t.gem_repositories = Rake::Gem::Maintenance::Repos.internal
       end
       """
     When I successfully run `rake -T upgrade`
@@ -72,8 +72,8 @@ Scenario: Repos.internal returns only cbp-org repository
       require "rake/gem/maintenance/upgrade_task"
       require "rake/gem/maintenance/repos"
 
-      Rake::GemMaintenance::UpgradeTask.new do |t|
-        t.gem_repositories = Rake::GemMaintenance::Repos.all
+      Rake::Gem::Maintenance::UpgradeTask.new do |t|
+        t.gem_repositories = Rake::Gem::Maintenance::Repos.all
       end
       """
     When I successfully run `rake -T upgrade`
@@ -84,10 +84,10 @@ Scenario: Repos.internal returns only cbp-org repository
       """
       require "rake/gem/maintenance/repos"
 
-      Rake::GemMaintenance::Repos.internal_url = "https://my-internal.example.com"
+      Rake::Gem::Maintenance::Repos.internal_url = "https://my-internal.example.com"
 
       task :show_repos do
-        puts Rake::GemMaintenance::Repos.internal.inspect
+        puts Rake::Gem::Maintenance::Repos.internal.inspect
       end
       """
     When I successfully run `rake show_repos`
@@ -98,10 +98,10 @@ Scenario: Repos.internal returns only cbp-org repository
       """
       require "rake/gem/maintenance/repos"
 
-      Rake::GemMaintenance::Repos.rubygems_url = "https://private-rubygems.example.com"
+      Rake::Gem::Maintenance::Repos.rubygems_url = "https://private-rubygems.example.com"
 
       task :show_repos do
-        puts Rake::GemMaintenance::Repos.rubygems.inspect
+        puts Rake::Gem::Maintenance::Repos.rubygems.inspect
       end
       """
     When I successfully run `rake show_repos`
@@ -113,7 +113,7 @@ Scenario: Repos.internal returns only cbp-org repository
       require "rake/gem/maintenance/repos"
 
       task :show_repos do
-        puts Rake::GemMaintenance::Repos.geminabox.inspect
+        puts Rake::Gem::Maintenance::Repos.geminabox.inspect
       end
       """
     When I successfully run `rake show_repos`
@@ -124,10 +124,10 @@ Scenario: Repos.internal returns only cbp-org repository
       """
       require "rake/gem/maintenance/repos"
 
-      Rake::GemMaintenance::Repos.geminabox_url = "http://my-geminabox.local:9292"
+      Rake::Gem::Maintenance::Repos.geminabox_url = "http://my-geminabox.local:9292"
 
       task :show_repos do
-        puts Rake::GemMaintenance::Repos.geminabox.inspect
+        puts Rake::Gem::Maintenance::Repos.geminabox.inspect
       end
       """
     When I successfully run `rake show_repos`
@@ -138,10 +138,10 @@ Scenario: Repos.internal returns only cbp-org repository
       """
       require "rake/gem/maintenance/repos"
 
-      Rake::GemMaintenance::Repos.rubygems_api_key_env_var = "GEM_HOST_API_KEY"
+      Rake::Gem::Maintenance::Repos.rubygems_api_key_env_var = "GEM_HOST_API_KEY"
 
       task :show_repos do
-        puts Rake::GemMaintenance::Repos.rubygems.inspect
+        puts Rake::Gem::Maintenance::Repos.rubygems.inspect
       end
       """
     When I successfully run `rake show_repos`
@@ -153,7 +153,7 @@ Scenario: Repos.internal returns only cbp-org repository
       require "rake/gem/maintenance/repos"
 
       task :show_repos do
-        puts Rake::GemMaintenance::Repos.rubygems.inspect
+        puts Rake::Gem::Maintenance::Repos.rubygems.inspect
       end
       """
     When I successfully run `rake show_repos`
@@ -164,10 +164,10 @@ Scenario: Repos.internal returns only cbp-org repository
       """
       require "rake/gem/maintenance/repos"
 
-      Rake::GemMaintenance::Repos.rubygems_otp_seed_env_var = "RUBYGEMS_OTP_SEED"
+      Rake::Gem::Maintenance::Repos.rubygems_otp_seed_env_var = "RUBYGEMS_OTP_SEED"
 
       task :show_repos do
-        puts Rake::GemMaintenance::Repos.rubygems.inspect
+        puts Rake::Gem::Maintenance::Repos.rubygems.inspect
       end
       """
     When I successfully run `rake show_repos`
@@ -179,7 +179,7 @@ Scenario: Repos.internal returns only cbp-org repository
       require "rake/gem/maintenance/repos"
 
       task :show_repos do
-        puts Rake::GemMaintenance::Repos.rubygems.inspect
+        puts Rake::Gem::Maintenance::Repos.rubygems.inspect
       end
       """
     When I successfully run `rake show_repos`
@@ -191,9 +191,9 @@ Scenario: Repos.internal returns only cbp-org repository
       require "rake/gem/maintenance/upgrade_task"
       require "rake/gem/maintenance/repos"
 
-      Rake::GemMaintenance::UpgradeTask.new do |t|
-        t.gem_repositories = Rake::GemMaintenance::Repos.geminabox +
-                             Rake::GemMaintenance::Repos.rubygems
+      Rake::Gem::Maintenance::UpgradeTask.new do |t|
+        t.gem_repositories = Rake::Gem::Maintenance::Repos.geminabox +
+                             Rake::Gem::Maintenance::Repos.rubygems
       end
       """
     When I successfully run `rake -T upgrade`

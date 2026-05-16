@@ -8,7 +8,7 @@ Feature: Upgrade task custom configuration
       """
       require "rake/gem/maintenance/upgrade_task"
 
-      Rake::GemMaintenance::UpgradeTask.new(:deps)
+      Rake::Gem::Maintenance::UpgradeTask.new(:deps)
       """
     When I successfully run `rake -T deps`
     Then the output should contain "rake deps "
@@ -21,7 +21,7 @@ Feature: Upgrade task custom configuration
       """
       require "rake/gem/maintenance/upgrade_task"
 
-      Rake::GemMaintenance::UpgradeTask.new do |t|
+      Rake::Gem::Maintenance::UpgradeTask.new do |t|
         t.verification_task = :test
       end
 
@@ -38,7 +38,7 @@ Feature: Upgrade task custom configuration
       """
       require "rake/gem/maintenance/upgrade_task"
 
-      Rake::GemMaintenance::UpgradeTask.new do |t|
+      Rake::Gem::Maintenance::UpgradeTask.new do |t|
         t.auto_pipeline = %i[branch gems commit push]
       end
 

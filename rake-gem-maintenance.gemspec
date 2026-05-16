@@ -4,7 +4,7 @@ require_relative "lib/rake/gem/maintenance/version"
 
 Gem::Specification.new do |spec|
   spec.name = "rake-gem-maintenance"
-  spec.version = Rake::GemMaintenance::VERSION
+  spec.version = Rake::Gem::Maintenance::VERSION
   spec.authors = ["Christophe Broult"]
   spec.email = ["cbroult@yahoo.com"]
 

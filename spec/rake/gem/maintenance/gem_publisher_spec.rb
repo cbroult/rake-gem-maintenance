@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.describe Rake::GemMaintenance::GemPublisher do
+RSpec.describe Rake::Gem::Maintenance::GemPublisher do
   subject(:publisher) { described_class.new(repositories, otp_provider: otp_provider) }
 
-  let(:otp_provider) { instance_double(Rake::GemMaintenance::OtpProvider, otp_for: nil) }
+  let(:otp_provider) { instance_double(Rake::Gem::Maintenance::OtpProvider, otp_for: nil) }
   let(:repositories) { [{ name: "rubygems", url: "https://rubygems.org" }] }
   let(:gem_file) { "my-gem-1.0.0.gem" }
 

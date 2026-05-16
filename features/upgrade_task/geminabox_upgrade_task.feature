@@ -8,7 +8,7 @@ Feature: GeminaboxUpgradeTask for local geminabox gems
       ```
       require "rake/gem/maintenance/upgrade_task"
 
-      Rake::GemMaintenance::GeminaboxUpgradeTask.new
+      Rake::Gem::Maintenance::GeminaboxUpgradeTask.new
       ```
     When I successfully run `rake -T upgrade`
     Then the output should contain "upgrade:auto"
@@ -23,7 +23,7 @@ Feature: GeminaboxUpgradeTask for local geminabox gems
       ```
       require "rake/gem/maintenance/upgrade_task"
 
-      upgrade_task = Rake::GemMaintenance::GeminaboxUpgradeTask.new
+      upgrade_task = Rake::Gem::Maintenance::GeminaboxUpgradeTask.new
 
       task :show_repos do
         puts "Repositories: #{upgrade_task.gem_repositories}"
@@ -38,7 +38,7 @@ Feature: GeminaboxUpgradeTask for local geminabox gems
       ```
       require "rake/gem/maintenance/upgrade_task"
 
-      Rake::GemMaintenance::GeminaboxUpgradeTask.new
+      Rake::Gem::Maintenance::GeminaboxUpgradeTask.new
       ```
     When I successfully run `rake -T upgrade:prepare_version`
     Then the output should contain "upgrade:prepare_version"
@@ -48,7 +48,7 @@ Feature: GeminaboxUpgradeTask for local geminabox gems
       ```
       require "rake/gem/maintenance/upgrade_task"
 
-      Rake::GemMaintenance::GeminaboxUpgradeTask.new
+      Rake::Gem::Maintenance::GeminaboxUpgradeTask.new
       ```
     When I successfully run `rake -T upgrade`
     Then the output should contain "upgrade:renew_api_key"

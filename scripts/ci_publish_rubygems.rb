@@ -9,8 +9,8 @@
 $LOAD_PATH.unshift File.join(__dir__, "..", "lib")
 require "rake/gem/maintenance"
 
-Rake::GemMaintenance::Repos.rubygems_api_key_env_var = "GEM_HOST_API_KEY"
-Rake::GemMaintenance::Repos.rubygems_otp_seed_env_var = "RUBYGEMS_OTP_SEED"
+Rake::Gem::Maintenance::Repos.rubygems_api_key_env_var = "GEM_HOST_API_KEY"
+Rake::Gem::Maintenance::Repos.rubygems_otp_seed_env_var = "RUBYGEMS_OTP_SEED"
 
 gemspec_file = Dir["*.gemspec"].first
 abort "ERROR: No gemspec found in #{Dir.pwd}" unless gemspec_file
@@ -21,7 +21,7 @@ gem_file = Dir["*.gem"].max_by { |f| File.mtime(f) }
 abort "ERROR: No .gem file found after build" unless gem_file
 
 puts "Publishing #{gem_file} to rubygems.org..."
-publisher = Rake::GemMaintenance::GemPublisher.new(Rake::GemMaintenance::Repos.rubygems)
+publisher = Rake::Gem::Maintenance::GemPublisher.new(Rake::Gem::Maintenance::Repos.rubygems)
 publisher.publish(gem_file)
 
 abort "ERROR: Failed to publish #{gem_file} to rubygems.org" if publisher.successful_repos.empty?

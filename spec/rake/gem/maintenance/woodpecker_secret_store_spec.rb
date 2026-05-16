@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Rake::GemMaintenance::WoodpeckerSecretStore do
+RSpec.describe Rake::Gem::Maintenance::WoodpeckerSecretStore do
   subject(:store) do
     described_class.new(server: "https://ci.example.internal", org: "my-org", token: "tok")
   end

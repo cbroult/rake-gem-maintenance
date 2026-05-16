@@ -21,7 +21,7 @@ Feature: Install tasks
       require "rake/gem/maintenance/install_tasks"
 
       task :show_api_key_env_var do
-        puts Rake::GemMaintenance::Repos.rubygems_api_key_env_var
+        puts Rake::Gem::Maintenance::Repos.rubygems_api_key_env_var
       end
       """
     When I successfully run `rake show_api_key_env_var`
@@ -33,7 +33,7 @@ Feature: Install tasks
       require "rake/gem/maintenance/install_tasks"
 
       task :show_otp_seed_env_var do
-        puts Rake::GemMaintenance::Repos.rubygems_otp_seed_env_var
+        puts Rake::Gem::Maintenance::Repos.rubygems_otp_seed_env_var
       end
       """
     When I successfully run `rake show_otp_seed_env_var`

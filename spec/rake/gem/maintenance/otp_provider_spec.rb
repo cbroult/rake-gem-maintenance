@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Rake::GemMaintenance::OtpProvider do
+RSpec.describe Rake::Gem::Maintenance::OtpProvider do
   subject(:provider) { described_class.new(ci_environment: ci_environment, input: input) }
 
   let(:ci_environment) { double("CIEnvironment", ci?: false) } # rubocop:disable RSpec/VerifiedDoubles
