@@ -1,5 +1,4 @@
-* Relocate to Rake::Gem::Maintenance so that `rake bump` works (it fails currently).
-
 # Packwerk
 
-Please look into implementing Packwerk so we enfore better modularity if that makes sense here.
+Packwerk is Shopify's package enforcement tool designed for large Rails monoliths.
+With ~15 files in this library gem, the overhead is not warranted — close without implementing.
