@@ -7,6 +7,7 @@ Rake::Gem::Maintenance::Repos.rubygems_otp_seed_env_var = "RUBYGEMS_OTP_SEED"
 
 Rake::Gem::Maintenance::UpgradeTask.new
 Rake::Gem::Maintenance::VersionBumpTask.new
+Rake::Gem::Maintenance::RubygemsPublishTask.new
 
 Rake::Gem::Maintenance::CredentialStore.new.apply_to_env(
   username_env_var: "RUBYGEMS_USERNAME",
