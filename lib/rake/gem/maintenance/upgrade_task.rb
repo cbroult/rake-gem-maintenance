@@ -8,6 +8,8 @@ require_relative "otp_provider"
 require_relative "renew_api_key_task"
 require_relative "gem_publisher"
 require_relative "repos"
+require_relative "ruby_version_checker"
+require_relative "ruby_version_updater"
 
 module Rake
   module Gem
@@ -22,7 +24,8 @@ module Rake
                       :files_to_commit, :verification_task, :release_task,
                       :version_bump_task, :update_rubygems, :update_gems,
                       :run_bundle_audit, :auto_pipeline, :gem_repositories,
-                      :gem_publisher_class, :gem_name, :gem_version
+                      :gem_publisher_class, :gem_name, :gem_version,
+                      :update_ruby, :ruby_version_checker_class, :ruby_version_updater_class
 
         attr_writer :renew_api_key_task_class
 
@@ -47,14 +50,25 @@ module Rake
           @verification_task = :verify
           @release_task = :release
           @version_bump_task = "version:bump"
-          @update_rubygems = true
-          @update_gems = true
-          @run_bundle_audit = true
           @auto_pipeline = nil
           @gem_repositories = Repos.rubygems
           @gem_publisher_class = GemPublisher
           @gem_name = detect_gem_name
           @gem_version = detect_gem_version
+          apply_default_gem_update_configuration
+          apply_default_ruby_version_configuration
+        end
+
+        def apply_default_gem_update_configuration
+          @update_rubygems = true
+          @update_gems = true
+          @run_bundle_audit = true
+        end
+
+        def apply_default_ruby_version_configuration
+          @update_ruby = true
+          @ruby_version_checker_class = RubyVersionChecker
+          @ruby_version_updater_class = RubyVersionUpdater
         end
 
         private
@@ -216,11 +230,22 @@ module Rake
         end
 
         def do_upgrade_gems
+          update_ruby_versions if update_ruby
           sh "gem update --system" if update_rubygems
           sh "gem update" if update_gems
           sh "bundle update --bundler"
           sh "bundle update --all"
           sh "bundle audit" if run_bundle_audit
+        end
+
+        def update_ruby_versions
+          checker = ruby_version_checker_class.new
+          if checker.latest_stable.nil?
+            puts "[WARN] Could not fetch Ruby version info — skipping Ruby update"
+            return
+          end
+          modified = ruby_version_updater_class.new.update(checker: checker)
+          files_to_commit.concat(modified) if modified.any?
         end
 
         def commit_changes
