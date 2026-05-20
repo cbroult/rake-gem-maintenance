@@ -1,7 +1,6 @@
 when:
   - event: cron
     cron: monthly-renew-api-key
-  - event: manual
 
 labels:
   platform: linux

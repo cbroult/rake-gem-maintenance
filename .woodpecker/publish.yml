@@ -10,7 +10,7 @@
 #   badge_service_token — write token for badge.cbp-org.internal
 
 when:
-  event: [push, manual]
+  event: push
   branch: main
 
 labels:
