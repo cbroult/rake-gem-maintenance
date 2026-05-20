@@ -34,7 +34,7 @@ steps:
       RUBYGEMS_OTP_SEED:
         from_secret: rubygems_otp_seed
     commands:
-      - apk add --no-cache build-base
+      - apk add --no-cache build-base git
       - bundle install --jobs 4 --retry 3
       - ruby scripts/ci_publish_rubygems.rb
 
