@@ -19,7 +19,7 @@ steps:
     environment:
       CUCUMBER_PUBLISH_QUIET: "true"
     commands:
-      - apk add --no-cache build-base git
+      - apk add --no-cache build-base git yaml-dev
       - mkdir -p /root/.local/share/ruby-advisory-db/gems
       - bundle install --jobs 4 --retry 3
       - bundle exec rake verify

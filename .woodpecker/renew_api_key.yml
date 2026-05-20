@@ -29,7 +29,7 @@ steps:
         from_secret: woodpecker_api_token
       WOODPECKER_SERVER: "https://ci.cbp-org.internal"
     commands:
-      - apk add --no-cache build-base
+      - apk add --no-cache build-base git yaml-dev
       - bundle install --jobs 4 --retry 3
       - bundle exec rake upgrade:renew_api_key
 
