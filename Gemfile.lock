@@ -10,7 +10,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    aruba (2.4.0)
+    aruba (2.4.1)
       bundler (>= 1.17)
       contracts (>= 0.16.0, < 0.18.0)
       cucumber (>= 8.0, < 12.0)
@@ -201,11 +201,12 @@ DEPENDENCIES
   rubocop-rspec
 
 CHECKSUMS
-  aruba (2.4.0) sha256=92bb696efb06b1aa1dc3ff8b13ca71cd727e59d27572f9264216b9722b558299
+  aruba (2.4.1) sha256=c6821949136bd9c953b3cf553971c4780faa26bb40082ac5ce631c541e0caf0d
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
   bigdecimal (4.1.2) sha256=53d217666027eab4280346fba98e7d5b66baaae1b9c3c1c0ffe89d48188a3fbd
   builder (3.3.0) sha256=497918d2f9dca528fdca4b88d84e4ef4387256d984b8154e9d5d3fe5a9c8835f
+  bundler (4.0.12) sha256=7f8b757d28dfb636e7b24fba2344ac6dd13b5b24f4b46d62573d483f211825ac
   bundler-audit (0.9.3) sha256=81c8766c71e47d0d28a0f98c7eed028539f21a6ea3cd8f685eb6f42333c9b4e9
   coderay (1.1.3) sha256=dc530018a4684512f8f38143cd2a096c9f02a1fc2459edcfe534787a7fc77d4b
   contracts (0.17.3) sha256=e72e626413ea47099becb7b5683beb1c2ea902c69f5bad55c9258fe2b48314d7
