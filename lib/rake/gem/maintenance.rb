@@ -2,6 +2,7 @@
 
 require_relative "maintenance/version"
 require_relative "maintenance/version_bump_task"
+require_relative "maintenance/ci_version_bump_task"
 require_relative "maintenance/ci_environment"
 require_relative "maintenance/credential_store"
 require_relative "maintenance/ruby_version_checker"
