@@ -32,7 +32,7 @@ module Rake
 
         def env_credential(var)
           value = ENV.fetch(var, nil)
-          value&.empty? ? nil : value
+          value && value.empty? ? nil : value
         end
 
         def persist_to_woodpecker(new_key)

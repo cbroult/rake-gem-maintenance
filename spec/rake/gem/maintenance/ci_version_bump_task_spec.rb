@@ -165,7 +165,7 @@ RSpec.describe Rake::Gem::Maintenance::CiVersionBumpTask do
       allow(File).to receive(:read).with("lib/my_gem/version.rb").and_return("no version here")
       allow(task).to receive(:abort)
       task.send(:current_version)
-      expect(task).to have_received(:abort).with(match(/could not parse VERSION/))
+      expect(task).to have_received(:abort).with(include("could not parse VERSION"))
     end
   end
 
@@ -290,7 +290,7 @@ RSpec.describe Rake::Gem::Maintenance::CiVersionBumpTask do
     context "when all commands succeed and version changes" do
       before do
         allow(task).to receive(:system).with("git checkout -- .").and_return(true)
-        allow(task).to receive(:system).with(match(/gem bump/)).and_return(true)
+        allow(task).to receive(:system).with(include("gem bump")).and_return(true)
       end
 
       it "calls commit_and_push with the bumped version" do
@@ -315,7 +315,7 @@ RSpec.describe Rake::Gem::Maintenance::CiVersionBumpTask do
     context "when gem bump command fails" do
       before do
         allow(task).to receive(:system).with("git checkout -- .").and_return(true)
-        allow(task).to receive(:system).with(match(/gem bump/)).and_return(false)
+        allow(task).to receive(:system).with(include("gem bump")).and_return(false)
         allow(task).to receive(:abort)
       end
 

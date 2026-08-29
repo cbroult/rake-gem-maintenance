@@ -93,7 +93,7 @@ module Rake
 
         def env_credential(env_var)
           value = ENV.fetch(env_var, nil)
-          value&.empty? ? nil : value
+          value && value.empty? ? nil : value
         end
 
         def prompt_username

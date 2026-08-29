@@ -39,7 +39,7 @@ module Rake
         def prompt_for_otp(repository_name)
           print "Enter OTP for #{repository_name} (blank to skip): "
           value = @input.gets&.chomp
-          value&.empty? ? nil : value
+          value && value.empty? ? nil : value
         end
       end
     end
