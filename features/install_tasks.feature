@@ -15,6 +15,19 @@ Feature: Install tasks
     And the output should contain "version:bump"
     And the output should contain "bump[type]"
 
+  Scenario: Releases through the OTP aware publish task
+    Given a file named "Rakefile" with:
+      """
+      require "rake/gem/maintenance/install_tasks"
+
+      task :show_pipeline do
+        puts "pipeline: " + Rake::Task["upgrade:auto"].prerequisites.inspect
+      end
+      """
+    When I successfully run `rake show_pipeline`
+    Then the output should contain "publish:release"
+    And the output should not contain "\"release\""
+
   Scenario: Configures GEM_HOST_API_KEY as the rubygems API key env var
     Given a file named "Rakefile" with:
       """

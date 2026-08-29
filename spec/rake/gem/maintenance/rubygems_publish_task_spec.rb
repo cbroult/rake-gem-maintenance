@@ -13,13 +13,22 @@ RSpec.describe Rake::Gem::Maintenance::RubygemsPublishTask do
     it "sets publish:rubygems description" do
       expect(Rake::Task["publish:rubygems"].comment).to include("rubygems.org")
     end
+
+    it "defines the publish:release task" do
+      expect(Rake::Task.task_defined?("publish:release")).to be true
+    end
+
+    it "builds, tags, pushes git and publishes with OTP support" do
+      expect(Rake::Task["publish:release"].prerequisites)
+        .to eq(%w[build release:guard_clean release:source_control_push publish:rubygems])
+    end
   end
 
   describe "default attribute values" do
     subject(:task) { described_class.new }
 
-    it "uses *.gem as the default glob" do
-      expect(task.gem_file_glob).to eq("*.gem")
+    it "looks for built gems in pkg first" do
+      expect(task.gem_file_glob).to eq("{pkg/*.gem,*.gem}")
     end
 
     it "uses GemPublisher as the default publisher class" do
@@ -47,7 +56,8 @@ RSpec.describe Rake::Gem::Maintenance::RubygemsPublishTask do
     let(:publisher) { instance_double(Rake::Gem::Maintenance::GemPublisher, publish: nil, successful_repos: ["rubygems"]) }
 
     before do
-      allow(Dir).to receive(:glob).with("*.gem").and_return(["my-gem-1.0.0.gem"])
+      allow(Dir).to receive(:glob).with("{pkg/*.gem,*.gem}").and_return(["my-gem-1.0.0.gem"])
+      allow(File).to receive(:mtime).and_return(Time.now)
     end
 
     it "publishes to rubygems.org" do
@@ -68,15 +78,31 @@ RSpec.describe Rake::Gem::Maintenance::RubygemsPublishTask do
     subject(:task) { described_class.new }
 
     context "when a .gem file exists" do
-      before { allow(Dir).to receive(:glob).with("*.gem").and_return(["foo-1.0.0.gem"]) }
+      before do
+        allow(Dir).to receive(:glob).with("{pkg/*.gem,*.gem}").and_return(["foo-1.0.0.gem"])
+        allow(File).to receive(:mtime).and_return(Time.now)
+      end
 
       it "returns the gem file path" do
         expect(task.send(:gem_file)).to eq("foo-1.0.0.gem")
       end
     end
 
+    context "when several built gems exist" do
+      before do
+        allow(Dir).to receive(:glob).with("{pkg/*.gem,*.gem}")
+                                    .and_return(["pkg/foo-1.0.0.gem", "pkg/foo-1.0.1.gem"])
+        allow(File).to receive(:mtime).with("pkg/foo-1.0.0.gem").and_return(Time.now - 60)
+        allow(File).to receive(:mtime).with("pkg/foo-1.0.1.gem").and_return(Time.now)
+      end
+
+      it "returns the most recently built one" do
+        expect(task.send(:gem_file)).to eq("pkg/foo-1.0.1.gem")
+      end
+    end
+
     context "when no .gem file exists" do
-      before { allow(Dir).to receive(:glob).with("*.gem").and_return([]) }
+      before { allow(Dir).to receive(:glob).with("{pkg/*.gem,*.gem}").and_return([]) }
 
       it "raises an error" do
         expect { task.send(:gem_file) }.to raise_error(RuntimeError, /No .gem file found/)
