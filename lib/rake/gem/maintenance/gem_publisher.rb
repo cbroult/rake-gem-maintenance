@@ -8,6 +8,8 @@ module Rake
     module Maintenance
       # Publishes gems to multiple gem repositories, with version checking and warning handling.
       class GemPublisher
+        JSON_ACCEPT_HEADER = { "Accept" => "application/json" }.freeze
+
         attr_reader :repositories, :warnings, :failed_repositories, :successful_repos
 
         def initialize(repositories = default_repositories,
@@ -42,15 +44,14 @@ module Rake
         end
 
         def versions_on_repository(gem_name, repository)
-          url = "#{repository[:url]}/api/v1/gems/#{gem_name}.json"
-          uri = URI.parse(url)
-          response = uri.read(accept: "application/json")
-          data = JSON.parse(response)
-          data["versions"].map { |v| v["number"] }
+          response = URI.parse(versions_url(gem_name, repository)).read(JSON_ACCEPT_HEADER)
+          version_numbers(JSON.parse(response))
+        rescue OpenURI::HTTPError => e
+          return [] if gem_not_found?(e)
+
+          record_fetch_failure(repository, e)
         rescue StandardError => e
-          @failed_repositories << repository[:name]
-          @warnings << { repository: repository[:name], error: "Cannot fetch versions: #{e.message}" }
-          []
+          record_fetch_failure(repository, e)
         end
 
         def next_version(gem_name, current_version)
@@ -73,6 +74,25 @@ module Rake
         end
 
         private
+
+        def versions_url(gem_name, repository)
+          "#{repository[:url]}/api/v1/versions/#{gem_name}.json"
+        end
+
+        def version_numbers(data)
+          versions = data.is_a?(Hash) ? data["versions"] : data
+          (versions || []).map { |version| version["number"] }.compact
+        end
+
+        def gem_not_found?(error)
+          error.io.status.first.to_s == "404"
+        end
+
+        def record_fetch_failure(repository, error)
+          @failed_repositories << repository[:name]
+          @warnings << { repository: repository[:name], error: "Cannot fetch versions: #{error.message}" }
+          []
+        end
 
         def build_and_push(gem_file)
           repositories.each do |repo|

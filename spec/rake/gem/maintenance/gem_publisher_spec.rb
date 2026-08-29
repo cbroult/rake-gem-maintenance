@@ -100,6 +100,78 @@ RSpec.describe Rake::Gem::Maintenance::GemPublisher do
     end
   end
 
+  describe "#versions_on_repository" do
+    let(:repository) { { name: "rubygems", url: "https://rubygems.org" } }
+    let(:uri) { instance_double(URI::HTTPS) }
+
+    before { allow(URI).to receive(:parse).with(versions_url).and_return(uri) }
+
+    context "when the repository answers with the published versions" do
+      before { allow(uri).to receive(:read).and_return('[{"number":"1.1.0"},{"number":"1.0.0"}]') }
+
+      it "returns the version numbers" do
+        expect(publisher.versions_on_repository("my-gem", repository)).to eq(%w[1.1.0 1.0.0])
+      end
+
+      it "requests JSON with an Accept header" do
+        publisher.versions_on_repository("my-gem", repository)
+        expect(uri).to have_received(:read).with("Accept" => "application/json")
+      end
+
+      it "does not record the repository as failed" do
+        publisher.versions_on_repository("my-gem", repository)
+        expect(publisher.failed_repositories).to be_empty
+      end
+    end
+
+    context "when the gem is not published on the repository" do
+      before { allow(uri).to receive(:read).and_raise(http_error(["404", "Not Found"])) }
+
+      it "returns no versions" do
+        expect(publisher.versions_on_repository("my-gem", repository)).to be_empty
+      end
+
+      it "keeps the repository available" do
+        publisher.versions_on_repository("my-gem", repository)
+        expect(publisher.failed_repositories).to be_empty
+      end
+    end
+
+    context "when the repository fails" do
+      before { allow(uri).to receive(:read).and_raise(SocketError, "getaddrinfo failed") }
+
+      it "records the repository as failed" do
+        publisher.versions_on_repository("my-gem", repository)
+        expect(publisher.failed_repositories).to eq(["rubygems"])
+      end
+
+      it "records a warning" do
+        publisher.versions_on_repository("my-gem", repository)
+        expect(publisher.warnings.first[:error]).to include("Cannot fetch versions")
+      end
+    end
+
+    context "when the repository answers with a server error" do
+      before { allow(uri).to receive(:read).and_raise(http_error(["500", "Internal Server Error"])) }
+
+      it "records the repository as failed" do
+        publisher.versions_on_repository("my-gem", repository)
+        expect(publisher.failed_repositories).to eq(["rubygems"])
+      end
+    end
+
+    def versions_url
+      "https://rubygems.org/api/v1/versions/my-gem.json"
+    end
+
+    def http_error(status)
+      io = StringIO.new("")
+      io.extend(OpenURI::Meta)
+      io.status = status
+      OpenURI::HTTPError.new(status.join(" "), io)
+    end
+  end
+
   describe "#successful_repos and #failed_repositories" do
     let(:pub) { described_class.new(repositories, otp_provider: otp_provider) }
     let(:ok_status) { instance_double(Process::Status, success?: true) }
