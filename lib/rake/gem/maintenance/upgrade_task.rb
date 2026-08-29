@@ -257,12 +257,8 @@ module Rake
           sh "git push origin #{upgrade_branch}"
         end
 
-        # rubocop:disable Metrics/AbcSize
         def check_version_on_repositories
-          unless gem_name && gem_version
-            puts "[ERROR] No gemspec found - cannot check version/upgrade"
-            abort
-          end
+          abort_without_gemspec unless gem_name && gem_version
 
           publisher = gem_publisher_class.new(gem_repositories)
           publisher.check_all_repositories(gem_name)
@@ -270,19 +266,25 @@ module Rake
           return unless repos_available?(publisher)
 
           print_failed_repository_warnings(publisher)
-          version = gem_version
-          next_ver = publisher.next_version(gem_name, version)
+          report_version_status(publisher)
+          handle_partial_publish_warning(publisher, gem_version)
+        end
 
-          if next_ver == version
-            puts "[INFO] Version #{version} not found on any repository - will publish"
+        def abort_without_gemspec
+          puts "[ERROR] No gemspec found - cannot check version/upgrade"
+          abort
+        end
+
+        def report_version_status(publisher)
+          next_ver = publisher.next_version(gem_name, gem_version)
+
+          if next_ver == gem_version
+            puts "[INFO] Version #{gem_version} not found on any repository - will publish"
           else
-            puts "[INFO] Version #{version} already published to all repositories"
+            puts "[INFO] Version #{gem_version} already published to all repositories"
             puts "[INFO] Next available version: #{next_ver}"
           end
-
-          handle_partial_publish_warning(publisher, version)
         end
-        # rubocop:enable Metrics/AbcSize
 
         def handle_partial_publish_warning(publisher, version)
           return if publisher.successful_repos.empty?
